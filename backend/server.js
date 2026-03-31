@@ -519,9 +519,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-// Fallback route (IMPORTANT)
-app.use((req, res) => {
-  res.status(404).send("Route not found");
+// Catch all routes (VERY IMPORTANT)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
 app.listen(PORT, () => {
