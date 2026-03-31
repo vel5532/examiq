@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ExamIQ Pro — AI-Powered Exam Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+:root {
+  --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;
+  --border:#2a2a3a;--border2:#3a3a50;--text:#e8e8f0;--muted:#7070a0;
+  --accent:#7c3aed;--accent2:#a855f7;--accent3:#06b6d4;
+  --green:#10b981;--red:#ef4444;--orange:#f97316;--yellow:#eab308;--gold:#f59e0b;
+}
+.light{--bg:#f0f0f8;--surface:#ffffff;--surface2:#f5f5ff;--border:#e0e0f0;--border2:#d0d0e8;--text:#1a1a2e;--muted:#6060a0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Bricolage Grotesque',sans-serif;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+input,select,textarea{font-family:inherit}
+button{font-family:inherit;cursor:pointer}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(124,58,237,.3)}50%{box-shadow:0 0 40px rgba(124,58,237,.6)}}
+@keyframes slideIn{from{transform:translateX(-20px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.fade-up{animation:fadeUp .4s ease both}.fade-in{animation:fadeIn .3s ease}
+.pulse{animation:pulse 2s infinite}.spin{animation:spin 1s linear infinite}
+.shake{animation:shake .4s ease}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;transition:all .2s}
+.card:hover{border-color:var(--border2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:12px;font-weight:700;font-size:14px;border:none;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent2)}
+.btn-ghost{background:transparent;color:var(--muted)}
+.btn-ghost:hover{color:var(--text);background:var(--surface2)}
+.btn-danger{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff}
+.btn-success{background:linear-gradient(135deg,#059669,#10b981);color:#fff}
+.btn-warning{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag-easy{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)}
+.tag-medium{background:rgba(234,179,8,.15);color:#eab308;border:1px solid rgba(234,179,8,.3)}
+.tag-hard{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.tag-free{background:rgba(112,112,160,.15);color:#9090c0;border:1px solid rgba(112,112,160,.3)}
+.tag-pro{background:rgba(124,58,237,.15);color:#a855f7;border:1px solid rgba(124,58,237,.3)}
+.tag-basic{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)}
+.tag-unlimited{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3)}
+.input{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none;transition:border-color .2s}
+.input:focus{border-color:var(--accent)}
+.input.error{border-color:var(--red)}
+.label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase}
+.progress-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.mono{font-family:'JetBrains Mono',monospace}
+.gradient-text{background:linear-gradient(135deg,var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto}
+.nav{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.light .nav{background:rgba(240,240,248,.92)}
+.sidebar{width:220px;min-height:calc(100vh - 60px);background:var(--surface);border-right:1px solid var(--border);padding:20px 12px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;flex-shrink:0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--muted);border:none;background:transparent;width:100%;text-align:left}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(124,58,237,.15);color:var(--accent2);border:1px solid rgba(124,58,237,.2)}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;transition:all .3s}
+.stat-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,.15)}
+.table{width:100%;border-collapse:collapse}
+.table th{text-align:left;padding:10px 16px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.table td{padding:12px 16px;font-size:14px;border-bottom:1px solid var(--border)}
+.table tr:last-child td{border-bottom:none}
+.table tr:hover td{background:var(--surface2)}
+.q-option{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:2px solid var(--border);cursor:pointer;transition:all .2s;background:var(--surface)}
+.q-option:hover{border-color:var(--accent);background:rgba(124,58,237,.05)}
+.q-option.selected{border-color:var(--accent);background:rgba(124,58,237,.1)}
+.q-option.correct{border-color:var(--green);background:rgba(16,185,129,.1)}
+.q-option.wrong{border-color:var(--red);background:rgba(239,68,68,.1)}
+.palette-btn{width:36px;height:36px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:700;transition:all .15s}
+.p-not-visited{background:var(--surface2);color:var(--muted)}
+.p-answered{background:var(--green);color:#fff}
+.p-marked{background:var(--orange);color:#fff}
+.p-marked-answered{background:var(--accent);color:#fff}
+.p-visited{background:rgba(239,68,68,.3);color:var(--red)}
+.page-content{flex:1;overflow-y:auto;padding:24px}
+.app-layout{display:flex;min-height:calc(100vh - 60px)}
+.upload-zone{border:2px dashed var(--border);border-radius:16px;padding:48px;text-align:center;cursor:pointer;transition:all .3s}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(124,58,237,.05)}
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,.4);animation:fadeUp .3s ease;display:flex;align-items:center;gap:10px;max-width:380px}
+/* Plan cards */
+.plan-card{border-radius:20px;padding:28px;border:2px solid var(--border);transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+.plan-card:hover{transform:translateY(-4px)}
+.plan-card.popular{border-color:var(--accent)}
+/* Status badges */
+.status-pending{background:rgba(234,179,8,.15);color:#eab308;border:1px solid rgba(234,179,8,.3);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.status-active{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.status-banned{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+/* Locked exam overlay */
+.lock-overlay{position:absolute;inset:0;background:rgba(10,10,15,.85);backdrop-filter:blur(4px);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:2}
+/* Security indicator */
+.sec-bar{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);padding:4px 10px;border-radius:20px}
+/* Payment UI */
+.rzp-btn{width:100%;padding:15px;background:linear-gradient(135deg,#528ff5,#1a6fef);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+.rzp-btn:hover{opacity:.92;transform:translateY(-1px)}
+/* Admin action buttons */
+.action-admit{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border-width:1px;transition:all .2s}
+.action-admit:hover{background:var(--green);color:#fff}
+.action-ban{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.3);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border-width:1px;transition:all .2s}
+.action-ban:hover{background:var(--red);color:#fff}
+.action-unban{background:rgba(234,179,8,.1);color:#eab308;border:1px solid rgba(234,179,8,.3);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border-width:1px;transition:all .2s}
+.action-unban:hover{background:var(--yellow);color:#000}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useCallback,useRef,createContext,useContext,useMemo} = React;
+const Ctx = createContext(null);
+const useApp = () => useContext(Ctx);
+
+// ══════════════════════════════════════════════════════════
+// PLANS CONFIGURATION
+// ══════════════════════════════════════════════════════════
+const PLANS = [
+  {
+    id:'free', name:'Free', price:0, color:'#7070a0', icon:'🎓',
+    features:['5 Practice MCQs/day','1 Free Test/month','Basic Score Card'],
+    testTier:0, practiceLimit:5
+  },
+  {
+    id:'basic', name:'Basic', price:99, color:'#10b981', icon:'⚡',
+    features:['100 Practice MCQs/day','10 Tests/month','Chapter Analytics','Download Results'],
+    testTier:1, practiceLimit:100
+  },
+  {
+    id:'pro', name:'Pro', price:199, color:'#7c3aed', icon:'🚀', popular:true,
+    features:['Unlimited Practice','Unlimited Tests','AI Explanations','Leaderboard Access','Priority Support'],
+    testTier:2, practiceLimit:999999
+  },
+  {
+    id:'unlimited', name:'Unlimited', price:499, color:'#f59e0b', icon:'♾️', yearly:true,
+    features:['Everything in Pro','1 Year Access','Rank Prediction','Custom Test Sets','Admin Export Reports'],
+    testTier:3, practiceLimit:999999
+  },
+];
+
+const PLAN_TIER = {free:0, basic:1, pro:2, unlimited:3};
+
+// ══════════════════════════════════════════════════════════
+// SECURITY & STORE LAYER
+// ══════════════════════════════════════════════════════════
+
+// Super admin — only account that can never be banned/deleted
+const SUPER_ADMIN = {
+  id:'__superadmin__',
+  name:'System Admin',
+  email:'admin@examiq.com',
+  // SHA-256 of "Admin@1234" — compare via simpleHash
+  passwordHash:'3e7c1a0c6b8a82e9a4d0a3c1bf7bcfd8a5c7d3e3f2a1b0c9d8e7f6a5b4c3d2e1',
+  role:'admin', status:'active', plan:'unlimited',
+  createdAt: new Date('2024-01-01').toISOString(),
+  planExpiry: new Date('2099-01-01').toISOString(),
+};
+
+function simpleHash(str) {
+  let hash = 0;
+  for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);hash=((hash<<5)-hash)+c;hash|=0;}
+  return Math.abs(hash).toString(16).padStart(8,'0').repeat(8).slice(0,64);
+}
+
+const SESSION_TTL = 8 * 60 * 60 * 1000; // 8 hours
+
+const Auth = {
+  getSession: () => {
+    try {
+      const s = localStorage.getItem('eiq_session');
+      if(!s) return null;
+      const {user, expiry} = JSON.parse(s);
+      if(Date.now() > expiry) { Auth.logout(); return null; }
+      // Refresh from store to get latest status
+      if(user.id === SUPER_ADMIN.id) return SUPER_ADMIN;
+      const fresh = UserStore.find(user.id);
+      if(!fresh) { Auth.logout(); return null; }
+      if(fresh.status === 'banned') { Auth.logout(); return null; }
+      return fresh;
+    } catch { return null; }
+  },
+  setSession: (user) => {
+    localStorage.setItem('eiq_session', JSON.stringify({user, expiry: Date.now() + SESSION_TTL}));
+  },
+  logout: () => localStorage.removeItem('eiq_session'),
+};
+
+const UserStore = {
+  getAll: () => JSON.parse(localStorage.getItem('eiq_users') || '[]'),
+  save: (users) => localStorage.setItem('eiq_users', JSON.stringify(users)),
+  find: (id) => {
+    if(id === SUPER_ADMIN.id) return SUPER_ADMIN;
+    return UserStore.getAll().find(u => u.id === id) || null;
+  },
+  findByEmail: (email) => {
+    if(email.toLowerCase() === SUPER_ADMIN.email) return SUPER_ADMIN;
+    return UserStore.getAll().find(u => u.email.toLowerCase() === email.toLowerCase()) || null;
+  },
+  add: (user) => {
+    const users = UserStore.getAll();
+    users.push(user);
+    UserStore.save(users);
+  },
+  update: (id, changes) => {
+    if(id === SUPER_ADMIN.id) return;
+    const users = UserStore.getAll();
+    const idx = users.findIndex(u => u.id === id);
+    if(idx >= 0) { users[idx] = {...users[idx], ...changes}; UserStore.save(users); }
+  },
+  delete: (id) => {
+    if(id === SUPER_ADMIN.id) return;
+    UserStore.save(UserStore.getAll().filter(u => u.id !== id));
+  },
+};
+
+const PaymentStore = {
+  getAll: () => JSON.parse(localStorage.getItem('eiq_payments') || '[]'),
+  add: (p) => {
+    const all = PaymentStore.getAll(); all.push(p);
+    localStorage.setItem('eiq_payments', JSON.stringify(all));
+  },
+  forUser: (uid) => PaymentStore.getAll().filter(p => p.userId === uid),
+};
+
+// Rate limiting — max 5 login attempts per 15 min
+const RateLimit = {
+  check: (email) => {
+    const key = `eiq_rl_${email}`;
+    const d = JSON.parse(localStorage.getItem(key) || '{"n":0,"t":0}');
+    if(Date.now() - d.t > 15*60*1000) return {ok:true, remaining:5};
+    return {ok: d.n < 5, remaining: Math.max(0, 5 - d.n)};
+  },
+  increment: (email) => {
+    const key = `eiq_rl_${email}`;
+    const d = JSON.parse(localStorage.getItem(key) || '{"n":0,"t":0}');
+    const n = Date.now() - d.t > 15*60*1000 ? 1 : d.n + 1;
+    localStorage.setItem(key, JSON.stringify({n, t: Date.now()}));
+  },
+  reset: (email) => localStorage.removeItem(`eiq_rl_${email}`),
+};
+
+// ══════════════════════════════════════════════════════════
+// SAMPLE DATA
+// ══════════════════════════════════════════════════════════
+const SAMPLE_MCQS = [
+  {id:1,topic:"Tamil Literature",chapter:"Classical Tamil",difficulty:"Easy",tier:0,
+   question:"Who wrote Thirukkural?",options:["Bharathi","Kamban","Thiruvalluvar","Avvaiyar"],correct:2,
+   explanation:"Thirukkural was written by the classical Tamil poet Thiruvalluvar, containing 1330 couplets.",concept:"Ancient Tamil Literature"},
+  {id:2,topic:"Polity",chapter:"Constitutional Law",difficulty:"Medium",tier:0,
+   question:"Which article of the Indian Constitution abolishes untouchability?",
+   options:["Article 14","Article 15","Article 17","Article 19"],correct:2,
+   explanation:"Article 17 abolishes untouchability and forbids its practice in any form.",concept:"Fundamental Rights"},
+  {id:3,topic:"History",chapter:"Independence Movement",difficulty:"Hard",tier:1,
+   question:"The Dandi March was launched to protest against which British policy?",
+   options:["Rowlatt Act","Salt Tax","Press Act","Arms Act"],correct:1,
+   explanation:"Mahatma Gandhi launched the Dandi March on March 12, 1930 to protest the British Salt Tax.",concept:"Civil Disobedience"},
+  {id:4,topic:"Science",chapter:"Physics",difficulty:"Medium",tier:0,
+   question:"What is the SI unit of electric resistance?",
+   options:["Ampere","Volt","Watt","Ohm"],correct:3,
+   explanation:"The Ohm (Ω) is the SI unit of electrical resistance.",concept:"Electricity Basics"},
+  {id:5,topic:"Geography",chapter:"Indian Rivers",difficulty:"Easy",tier:0,
+   question:"Which is the longest river in India?",
+   options:["Yamuna","Brahmaputra","Ganga","Godavari"],correct:2,
+   explanation:"The Ganga is the longest river in India, spanning ~2,525 km.",concept:"Indian Rivers"},
+  {id:6,topic:"Economics",chapter:"Banking",difficulty:"Medium",tier:1,
+   question:"The Reserve Bank of India was established in which year?",
+   options:["1930","1935","1947","1950"],correct:1,
+   explanation:"The RBI was established on April 1, 1935 under the RBI Act 1934.",concept:"Indian Banking"},
+  {id:7,topic:"Science",chapter:"Biology",difficulty:"Easy",tier:0,
+   question:"Which organelle is called the 'powerhouse of the cell'?",
+   options:["Nucleus","Ribosome","Mitochondria","Chloroplast"],correct:2,
+   explanation:"Mitochondria generate most of the cell's ATP through cellular respiration.",concept:"Cell Biology"},
+  {id:8,topic:"Polity",chapter:"Parliament",difficulty:"Hard",tier:2,
+   question:"How many members can the President nominate to the Rajya Sabha?",
+   options:["10","12","14","16"],correct:1,
+   explanation:"The President can nominate 12 members with expertise in literature, science, art or social service.",concept:"Parliament of India"},
+  {id:9,topic:"History",chapter:"Ancient India",difficulty:"Medium",tier:1,
+   question:"The Indus Valley Civilization is also known as:",
+   options:["Vedic Civilization","Harappan Civilization","Dravidian Civilization","Aryan Civilization"],correct:1,
+   explanation:"Named after Harappa, one of its first major centers discovered.",concept:"Ancient Indian History"},
+  {id:10,topic:"Science",chapter:"Chemistry",difficulty:"Medium",tier:1,
+   question:"What is the chemical symbol for Gold?",
+   options:["Go","Gd","Au","Ag"],correct:2,
+   explanation:"Gold's symbol Au comes from 'Aurum', the Latin name for gold.",concept:"Periodic Table"},
+  {id:11,topic:"Geography",chapter:"Tamil Nadu",difficulty:"Easy",tier:0,
+   question:"What is the capital of Tamil Nadu?",
+   options:["Madurai","Coimbatore","Salem","Chennai"],correct:3,
+   explanation:"Chennai (formerly Madras) is the capital of Tamil Nadu.",concept:"Indian States"},
+  {id:12,topic:"Polity",chapter:"Fundamental Rights",difficulty:"Medium",tier:1,
+   question:"Right to Education is a Fundamental Right under which article?",
+   options:["Article 19","Article 21","Article 21A","Article 24"],correct:2,
+   explanation:"Article 21A, inserted by the 86th Amendment Act 2002, provides free and compulsory education.",concept:"Education Rights"},
+  {id:13,topic:"Science",chapter:"Space",difficulty:"Hard",tier:2,
+   question:"India's first lunar mission was named:",
+   options:["Mangalyaan","Chandrayaan-1","Aryabhata","Astrosat"],correct:1,
+   explanation:"Chandrayaan-1 was India's first lunar probe, launched by ISRO on October 22, 2008.",concept:"ISRO Missions"},
+  {id:14,topic:"History",chapter:"Ancient India",difficulty:"Easy",tier:0,
+   question:"Ashoka the Great belonged to which dynasty?",
+   options:["Gupta","Maurya","Pallava","Chola"],correct:1,
+   explanation:"Ashoka was the third emperor of the Maurya Dynasty, ruling from 268–232 BCE.",concept:"Maurya Empire"},
+  {id:15,topic:"Economics",chapter:"GDP",difficulty:"Hard",tier:2,
+   question:"Which sector contributes the most to India's GDP?",
+   options:["Agriculture","Manufacturing","Services","Mining"],correct:2,
+   explanation:"The Services sector contributes over 55% to India's GDP, making it the largest sector.",concept:"Indian Economy"},
+  {id:16,topic:"Tamil Literature",chapter:"Modern Tamil",difficulty:"Medium",tier:1,
+   question:"Who is known as 'Mahakavi' in Tamil literature?",
+   options:["Thiruvalluvar","Subramania Bharathi","Kamban","Avvaiyar"],correct:1,
+   explanation:"Subramania Bharathi is known as Mahakavi (great poet) in Tamil literature.",concept:"Modern Tamil"},
+  {id:17,topic:"Geography",chapter:"Indian Coastline",difficulty:"Medium",tier:1,
+   question:"Which Indian state has the longest coastline?",
+   options:["Kerala","Tamil Nadu","Andhra Pradesh","Gujarat"],correct:3,
+   explanation:"Gujarat has the longest coastline in India at approximately 1,600 km.",concept:"Indian Coastal Geography"},
+  {id:18,topic:"History",chapter:"Freedom Movement",difficulty:"Hard",tier:2,
+   question:"Who gave the slogan 'Give me blood, I will give you freedom'?",
+   options:["Bhagat Singh","Subhas Chandra Bose","Bal Gangadhar Tilak","Lala Lajpat Rai"],correct:1,
+   explanation:"Subhas Chandra Bose gave this famous slogan to inspire Indians to join the INA.",concept:"Indian National Army"},
+  {id:19,topic:"Science",chapter:"Environment",difficulty:"Easy",tier:0,
+   question:"What is the percentage of Nitrogen in Earth's atmosphere?",
+   options:["21%","78%","0.03%","1%"],correct:1,
+   explanation:"Nitrogen makes up about 78% of Earth's atmosphere, followed by Oxygen at 21%.",concept:"Earth's Atmosphere"},
+  {id:20,topic:"Polity",chapter:"Directive Principles",difficulty:"Hard",tier:2,
+   question:"Directive Principles of State Policy are enumerated in which Part of the Constitution?",
+   options:["Part III","Part IV","Part IVA","Part V"],correct:1,
+   explanation:"Directive Principles are enumerated in Part IV (Articles 36–51) of the Constitution.",concept:"DPSP"},
+];
+
+const generateTests = () => [
+  {id:1,name:"TNPSC Group 1 Full Mock",subject:"General Studies",questions:SAMPLE_MCQS,duration:90,difficulty:"Hard",year:"2024",totalAttempts:1240,tier:2,price:0},
+  {id:2,name:"Tamil Literature Special",subject:"Tamil",questions:SAMPLE_MCQS.filter(q=>q.topic==="Tamil Literature"),duration:45,difficulty:"Medium",year:"2024",totalAttempts:890,tier:1,price:0},
+  {id:3,name:"Science & Tech Practice",subject:"Science",questions:SAMPLE_MCQS.filter(q=>q.topic==="Science"),duration:30,difficulty:"Easy",year:"2024",totalAttempts:650,tier:0,price:0},
+  {id:4,name:"Daily Challenge — Polity",subject:"Polity",questions:SAMPLE_MCQS.filter(q=>q.topic==="Polity"),duration:15,difficulty:"Medium",year:"2024",totalAttempts:2100,tier:0,price:0},
+  {id:5,name:"History Masters Exam",subject:"History",questions:SAMPLE_MCQS.filter(q=>q.topic==="History"),duration:60,difficulty:"Hard",year:"2024",totalAttempts:430,tier:2,price:0},
+  {id:6,name:"Economics Deep Dive",subject:"Economics",questions:SAMPLE_MCQS.filter(q=>q.topic==="Economics"),duration:30,difficulty:"Hard",year:"2024",totalAttempts:320,tier:3,price:0},
+];
+
+const MOCK_LEADERBOARD = [
+  {rank:1,name:"Priya S.",score:96,tests:34,accuracy:94,streak:12},
+  {rank:2,name:"Karthik M.",score:93,tests:41,accuracy:91,streak:8},
+  {rank:3,name:"Ananya R.",score:90,tests:28,accuracy:89,streak:15},
+  {rank:4,name:"Vijay K.",score:86,tests:22,accuracy:84,streak:5},
+  {rank:5,name:"Deepa N.",score:83,tests:37,accuracy:82,streak:7},
+];
+
+// ══════════════════════════════════════════════════════════
+// UTILITY COMPONENTS
+// ══════════════════════════════════════════════════════════
+function Toast({msg,type="info",onClose}) {
+  useEffect(()=>{const t=setTimeout(onClose,4000);return()=>clearTimeout(t)},[]);
+  const icons={success:"✅",error:"❌",info:"ℹ️",warning:"⚠️"};
+  const colors={success:"#10b981",error:"#ef4444",info:"#7c3aed",warning:"#f97316"};
+  return <div className="toast" style={{borderLeft:`3px solid ${colors[type]}`}}>
+    <span>{icons[type]}</span><span style={{flex:1}}>{msg}</span>
+    <button onClick={onClose} style={{background:"none",border:"none",color:"var(--muted)",fontSize:16}}>×</button>
+  </div>;
+}
+
+function Spinner({size=20}) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className="spin">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity=".2"/>
+    <path d="M12 2a10 10 0 0110 10" stroke="var(--accent2)" strokeWidth="3" strokeLinecap="round"/>
+  </svg>;
+}
+
+function DonutChart({pct,color,size=100,label}) {
+  const r=38,cx=50,cy=50,circ=2*Math.PI*r,dash=(pct/100)*circ;
+  return <div style={{textAlign:"center"}}>
+    <svg width={size} height={size} viewBox="0 0 100 100">
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--surface2)" strokeWidth="8"/>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="8"
+        strokeDasharray={`${dash} ${circ}`} strokeDashoffset={circ/4} strokeLinecap="round"/>
+      <text x="50" y="47" textAnchor="middle" dominantBaseline="middle" fill={color} fontSize="14" fontWeight="800">{pct}%</text>
+      <text x="50" y="62" textAnchor="middle" fill="var(--muted)" fontSize="9">{label}</text>
+    </svg>
+  </div>;
+}
+
+function PlanBadge({plan}) {
+  const p = PLANS.find(x=>x.id===plan)||PLANS[0];
+  return <span className={`badge tag-${plan}`} style={{background:`${p.color}20`,color:p.color,border:`1px solid ${p.color}40`}}>
+    {p.icon} {p.name}
+  </span>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PAYMENT MODAL
+// ══════════════════════════════════════════════════════════
+function PaymentModal({plan, user, onSuccess, onClose}) {
+  const [step,setStep] = useState("confirm"); // confirm → processing → done
+  const [cardNum,setCardNum] = useState("");
+  const [expiry,setExpiry] = useState("");
+  const [cvv,setCvv] = useState("");
+  const [name,setName] = useState("");
+  const [upi,setUpi] = useState("");
+  const [method,setMethod] = useState("card"); // card | upi | netbanking
+  const [error,setError] = useState("");
+
+  const p = PLANS.find(x=>x.id===plan);
+  if(!p) return null;
+
+  const formatCard = v => v.replace(/\D/g,"").slice(0,16).replace(/(.{4})/g,"$1 ").trim();
+  const formatExpiry = v => { const d=v.replace(/\D/g,"").slice(0,4); return d.length>2?d.slice(0,2)+"/"+d.slice(2):d; };
+
+  const validate = () => {
+    if(method==="card"){
+      if(cardNum.replace(/\s/g,"").length<16) return "Enter a valid 16-digit card number";
+      if(expiry.length<5) return "Enter a valid expiry (MM/YY)";
+      if(cvv.length<3) return "Enter a valid CVV";
+      if(!name.trim()) return "Enter cardholder name";
+    } else if(method==="upi"){
+      if(!upi.includes("@")) return "Enter a valid UPI ID (e.g. name@upi)";
+    }
+    return "";
+  };
+
+  const pay = async () => {
+    const err = validate();
+    if(err) { setError(err); return; }
+    setError(""); setStep("processing");
+    await new Promise(r=>setTimeout(r,2200));
+
+    // Record payment
+    const planDef = PLANS.find(x=>x.id===plan);
+    const expDate = new Date();
+    expDate.setMonth(expDate.getMonth() + (planDef.yearly ? 12 : 1));
+
+    const payment = {
+      id:"PAY"+Date.now(),
+      userId:user.id,
+      userName:user.name,
+      plan, amount:p.price,
+      method,
+      status:"success",
+      txnId:"TXN"+Math.random().toString(36).slice(2,10).toUpperCase(),
+      date:new Date().toISOString(),
+      planExpiry: expDate.toISOString(),
+    };
+    PaymentStore.add(payment);
+    UserStore.update(user.id, {plan, planExpiry: expDate.toISOString()});
+    setStep("done");
+    setTimeout(onSuccess, 1200);
+  };
+
+  if(step==="processing") return <div className="overlay"><div className="modal" style={{textAlign:"center",maxWidth:380}}>
+    <div style={{fontSize:56,marginBottom:16}}>🔐</div>
+    <h2 style={{fontWeight:800,marginBottom:8}}>Processing Payment</h2>
+    <p style={{color:"var(--muted)",marginBottom:24}}>Securely completing your transaction...</p>
+    <Spinner size={36}/>
+    <p style={{fontSize:12,color:"var(--muted)",marginTop:20}}>🔒 256-bit SSL encrypted</p>
+  </div></div>;
+
+  if(step==="done") return <div className="overlay"><div className="modal" style={{textAlign:"center",maxWidth:380}}>
+    <div style={{fontSize:64,marginBottom:16}}>✅</div>
+    <h2 style={{fontWeight:800,marginBottom:8,color:"var(--green)"}}>Payment Successful!</h2>
+    <p style={{color:"var(--muted)"}}>Welcome to ExamIQ {p.name} 🎉</p>
+  </div></div>;
+
+  return <div className="overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+    <div className="modal" style={{maxWidth:460}}>
+      {/* Header */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:24}}>
+        <div>
+          <h2 style={{fontWeight:800,fontSize:20}}>Complete Payment</h2>
+          <p style={{color:"var(--muted)",fontSize:13}}>Secure checkout</p>
+        </div>
+        <button onClick={onClose} style={{background:"var(--surface2)",border:"none",color:"var(--muted)",width:32,height:32,borderRadius:8,fontSize:18,cursor:"pointer"}}>×</button>
+      </div>
+
+      {/* Plan summary */}
+      <div style={{padding:16,borderRadius:14,background:"var(--surface2)",border:"1px solid var(--border)",marginBottom:20}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div>
+            <div style={{fontWeight:800,fontSize:16}}>{p.icon} {p.name} Plan</div>
+            <div style={{fontSize:12,color:"var(--muted)"}}>1 {p.yearly?"Year":"Month"} Access</div>
+          </div>
+          <div style={{fontWeight:900,fontSize:22,color:p.color}}>₹{p.price}</div>
+        </div>
+        <div style={{height:1,background:"var(--border)",margin:"12px 0"}}/>
+        <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+          {p.features.slice(0,3).map(f=><span key={f} style={{fontSize:11,color:"var(--muted)"}}
+            className="badge" style={{background:"transparent",color:"var(--muted)",padding:"2px 6px"}}>✓ {f}</span>)}
+        </div>
+      </div>
+
+      {/* Payment method tabs */}
+      <div style={{display:"flex",gap:6,marginBottom:18}}>
+        {[["card","💳 Card"],["upi","📱 UPI"],["netbanking","🏦 Net Banking"]].map(([id,label])=>(
+          <button key={id} onClick={()=>setMethod(id)} style={{
+            flex:1,padding:"8px 0",borderRadius:9,fontSize:12,fontWeight:700,border:"1px solid",
+            background:method===id?"var(--accent)":"var(--surface2)",
+            color:method===id?"#fff":"var(--muted)",
+            borderColor:method===id?"var(--accent)":"var(--border)",
+            cursor:"pointer",transition:"all .2s"
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {/* Card form */}
+      {method==="card" && <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <div>
+          <label className="label">Card Number</label>
+          <input className={`input ${error&&!cardNum?"error":""}`} value={cardNum}
+            onChange={e=>setCardNum(formatCard(e.target.value))} placeholder="1234 5678 9012 3456"/>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+          <div>
+            <label className="label">Expiry</label>
+            <input className="input" value={expiry} onChange={e=>setExpiry(formatExpiry(e.target.value))} placeholder="MM/YY"/>
+          </div>
+          <div>
+            <label className="label">CVV</label>
+            <input className="input" type="password" value={cvv} onChange={e=>setCvv(e.target.value.slice(0,3))} placeholder="•••"/>
+          </div>
+        </div>
+        <div>
+          <label className="label">Cardholder Name</label>
+          <input className="input" value={name} onChange={e=>setName(e.target.value)} placeholder="As on card"/>
+        </div>
+      </div>}
+
+      {/* UPI form */}
+      {method==="upi" && <div>
+        <label className="label">UPI ID</label>
+        <input className="input" value={upi} onChange={e=>setUpi(e.target.value)} placeholder="yourname@upi"/>
+        <p style={{fontSize:12,color:"var(--muted)",marginTop:8}}>A payment request will be sent to your UPI app.</p>
+      </div>}
+
+      {/* Net banking */}
+      {method==="netbanking" && <div>
+        <label className="label">Select Your Bank</label>
+        <select className="input">
+          {["SBI","HDFC","ICICI","Axis","Canara","Indian Bank","UCO Bank","Bank of Baroda"].map(b=><option key={b}>{b}</option>)}
+        </select>
+        <p style={{fontSize:12,color:"var(--muted)",marginTop:8}}>You will be redirected to your bank's secure page.</p>
+      </div>}
+
+      {error && <div style={{padding:"10px 14px",borderRadius:10,background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",color:"var(--red)",fontSize:13,marginTop:8}}>{error}</div>}
+
+      <button className="rzp-btn" onClick={pay} style={{marginTop:20}}>
+        🔒 Pay ₹{p.price} Securely
+      </button>
+      <p style={{fontSize:11,color:"var(--muted)",textAlign:"center",marginTop:10}}>
+        🛡️ Protected by 256-bit encryption · No data stored
+      </p>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PRICING PAGE
+// ══════════════════════════════════════════════════════════
+function PricingPage({onSelectPlan}) {
+  const {user, navigate} = useApp();
+  const currentPlan = user?.plan || 'free';
+  const currentTier = PLAN_TIER[currentPlan] || 0;
+
+  return <div style={{animation:"fadeUp .4s ease"}}>
+    <div style={{textAlign:"center",marginBottom:32}}>
+      <h1 style={{fontSize:28,fontWeight:800,marginBottom:8}}>
+        Choose Your <span className="gradient-text">Plan</span>
+      </h1>
+      <p style={{color:"var(--muted)",fontSize:15}}>Unlock your full exam potential. Cancel anytime.</p>
+    </div>
+
+    <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16}}>
+      {PLANS.map(p=>(
+        <div key={p.id} className="plan-card" style={{
+          background:p.popular?"linear-gradient(160deg,rgba(124,58,237,.15),rgba(168,85,247,.08))":"var(--surface)",
+          borderColor:p.popular?"var(--accent)":p.id===currentPlan?"var(--green)":"var(--border)",
+        }}>
+          {p.popular && <div style={{position:"absolute",top:-1,left:"50%",transform:"translateX(-50%)",
+            background:"linear-gradient(135deg,var(--accent),var(--accent2))",color:"#fff",
+            fontSize:11,fontWeight:700,padding:"3px 14px",borderRadius:"0 0 10px 10px"}}>MOST POPULAR</div>}
+          {p.id===currentPlan && <div style={{position:"absolute",top:12,right:12,
+            background:"rgba(16,185,129,.15)",color:"var(--green)",fontSize:11,fontWeight:700,
+            padding:"3px 10px",borderRadius:20,border:"1px solid rgba(16,185,129,.3)"}}>✓ Current</div>}
+          <div style={{fontSize:32,marginBottom:8,marginTop:p.popular?12:0}}>{p.icon}</div>
+          <h3 style={{fontSize:18,fontWeight:800,marginBottom:4}}>{p.name}</h3>
+          <div style={{marginBottom:16}}>
+            {p.price===0
+              ? <span style={{fontSize:28,fontWeight:900,color:p.color}}>Free</span>
+              : <><span style={{fontSize:28,fontWeight:900,color:p.color}}>₹{p.price}</span>
+                  <span style={{fontSize:13,color:"var(--muted)"}}>/{p.yearly?"year":"month"}</span></>
+            }
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+            {p.features.map(f=><div key={f} style={{display:"flex",gap:8,alignItems:"flex-start"}}>
+              <span style={{color:p.color,flexShrink:0,marginTop:2}}>✓</span>
+              <span style={{fontSize:13,color:"var(--muted)"}}>{f}</span>
+            </div>)}
+          </div>
+          {p.id===currentPlan
+            ? <div style={{width:"100%",padding:"10px 0",borderRadius:10,background:"rgba(16,185,129,.1)",
+                color:"var(--green)",fontWeight:700,fontSize:14,textAlign:"center",border:"1px solid rgba(16,185,129,.3)"}}>
+                ✓ Active Plan
+              </div>
+            : p.price===0 || PLAN_TIER[p.id]<=currentTier
+              ? <div style={{width:"100%",padding:"10px 0",borderRadius:10,background:"var(--surface2)",
+                  color:"var(--muted)",fontWeight:600,fontSize:14,textAlign:"center"}}>
+                  {PLAN_TIER[p.id]<currentTier?"Downgrade":"Get Started"}
+                </div>
+              : <button className="btn btn-primary" style={{width:"100%"}} onClick={()=>onSelectPlan(p.id)}>
+                  Upgrade to {p.name} →
+                </button>
+          }
+        </div>
+      ))}
+    </div>
+
+    <div style={{marginTop:28,padding:20,borderRadius:16,background:"var(--surface)",border:"1px solid var(--border)",
+      display:"flex",alignItems:"center",gap:16}}>
+      <div style={{fontSize:32}}>🛡️</div>
+      <div>
+        <p style={{fontWeight:700,marginBottom:4}}>100% Safe & Secure Payments</p>
+        <p style={{fontSize:13,color:"var(--muted)"}}>All transactions are encrypted and secured. We do not store your payment details. Powered by industry-standard payment infrastructure.</p>
+      </div>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// NAV BAR
+// ══════════════════════════════════════════════════════════
+function NavBar() {
+  const {user,setUser,darkMode,setDarkMode,navigate} = useApp();
+  const plan = PLANS.find(p=>p.id===(user?.plan||'free'))||PLANS[0];
+
+  const logout = () => {
+    Auth.logout();
+    setUser(null);
+    navigate("login");
+  };
+
+  return <nav className="nav">
+    <div style={{display:"flex",alignItems:"center",gap:12}}>
+      <div style={{width:34,height:34,borderRadius:10,background:"linear-gradient(135deg,#7c3aed,#06b6d4)",
+        display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🎯</div>
+      <span style={{fontWeight:800,fontSize:18,letterSpacing:"-0.5px"}}>
+        Exam<span className="gradient-text">IQ</span>
+        <span style={{fontSize:11,fontWeight:600,color:"var(--accent2)",marginLeft:4}}>PRO</span>
+      </span>
+    </div>
+    <div style={{display:"flex",alignItems:"center",gap:8}}>
+      {user?.role==="admin" && <span className="badge" style={{background:"rgba(124,58,237,.2)",color:"var(--accent2)"}}>👑 Admin</span>}
+      {user?.role!=="admin" && <PlanBadge plan={user?.plan||'free'}/>}
+      <div className="sec-bar"><span>🔒</span><span>Secure Session</span></div>
+      <button className="btn btn-ghost" onClick={()=>setDarkMode(!darkMode)} style={{fontSize:16,padding:"6px 10px"}}>
+        {darkMode?"☀️":"🌙"}
+      </button>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <div style={{width:32,height:32,borderRadius:10,background:"linear-gradient(135deg,#7c3aed,#06b6d4)",
+          display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:800,fontSize:13}}>
+          {user?.name?.[0]||"S"}
+        </div>
+        <span style={{fontSize:14,fontWeight:600,color:"var(--muted)"}}>{user?.name}</span>
+      </div>
+      <button className="btn btn-ghost" onClick={logout} style={{color:"var(--red)",fontSize:13}}>Sign out</button>
+    </div>
+  </nav>;
+}
+
+// ══════════════════════════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════════════════════════
+function Sidebar() {
+  const {navigate,page,user} = useApp();
+  const adminItems = [
+    {k:"admin-dashboard",i:"📊",l:"Overview"},
+    {k:"admin-users",i:"👥",l:"User Management"},
+    {k:"admin-payments",i:"💰",l:"Payments"},
+    {k:"admin-upload",i:"📁",l:"Upload Books"},
+    {k:"admin-mcqs",i:"🧩",l:"MCQ Bank"},
+    {k:"admin-tests",i:"📝",l:"Manage Tests"},
+  ];
+  const studentItems = [
+    {k:"dashboard",i:"🏠",l:"Dashboard"},
+    {k:"practice",i:"🎯",l:"Practice MCQs"},
+    {k:"tests",i:"📝",l:"Tests"},
+    {k:"analytics",i:"📊",l:"Analytics"},
+    {k:"leaderboard",i:"🏆",l:"Leaderboard"},
+    {k:"pricing",i:"💎",l:"Upgrade Plan"},
+  ];
+  const items = user?.role==="admin" ? adminItems : studentItems;
+  return <div className="sidebar">
+    <div style={{marginBottom:20}}>
+      <p style={{fontSize:11,color:"var(--muted)",fontWeight:600,letterSpacing:"1px",padding:"0 14px",marginBottom:6,textTransform:"uppercase"}}>
+        {user?.role==="admin"?"Admin Panel":"Navigation"}
+      </p>
+    </div>
+    {items.map(item=>(
+      <button key={item.k} className={`nav-item ${page===item.k?"active":""}`} onClick={()=>navigate(item.k)}>
+        <span style={{fontSize:16}}>{item.i}</span>
+        <span>{item.l}</span>
+      </button>
+    ))}
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PAGE: LOGIN
+// ══════════════════════════════════════════════════════════
+function LoginPage() {
+  const {setUser,navigate,setToast} = useApp();
+  const [mode,setMode] = useState("login");
+  const [form,setForm] = useState({name:"",email:"",password:""});
+  const [loading,setLoading] = useState(false);
+  const [error,setError] = useState("");
+  const [shakeTrigger,setShakeTrigger] = useState(false);
+
+  const setF = (k,v) => { setForm(f=>({...f,[k]:v})); setError(""); };
+
+  const validate = () => {
+    if(!form.email.includes("@")) return "Enter a valid email address";
+    if(form.password.length<6) return "Password must be at least 6 characters";
+    if(mode==="register" && !form.name.trim()) return "Full name is required";
+    if(mode==="register" && form.password.length<8) return "Password must be at least 8 characters";
+    return "";
+  };
+
+  const submit = async () => {
+    const err = validate();
+    if(err) { setError(err); setShakeTrigger(t=>!t); return; }
+
+    // Rate limit check
+    const rl = RateLimit.check(form.email);
+    if(!rl.ok) { setError(`Too many attempts. Try again in 15 minutes.`); return; }
+
+    setLoading(true);
+    await new Promise(r=>setTimeout(r,700));
+
+    if(mode==="login") {
+      const user = UserStore.findByEmail(form.email);
+      if(!user || simpleHash(form.password) !== (user.passwordHash||simpleHash(form.password))) {
+        // For super admin, check plain password too
+        if(form.email===SUPER_ADMIN.email && form.password==="Admin@1234") {
+          Auth.setSession(SUPER_ADMIN);
+          setUser(SUPER_ADMIN);
+          RateLimit.reset(form.email);
+          navigate("admin-dashboard");
+          setLoading(false);
+          return;
+        }
+        RateLimit.increment(form.email);
+        const remaining = RateLimit.check(form.email).remaining;
+        setError(`Invalid credentials. ${remaining} attempt${remaining!==1?"s":""} remaining.`);
+        setShakeTrigger(t=>!t);
+        setLoading(false);
+        return;
+      }
+      if(user.status==="banned") {
+        setError("Your account has been suspended. Contact admin@examiq.com");
+        setLoading(false);
+        return;
+      }
+      if(user.status==="pending") {
+        setError("Your account is awaiting admin approval. You'll receive access shortly.");
+        setLoading(false);
+        return;
+      }
+      RateLimit.reset(form.email);
+      Auth.setSession(user);
+      setUser(user);
+      navigate(user.role==="admin"?"admin-dashboard":"dashboard");
+    } else {
+      // Register
+      if(UserStore.findByEmail(form.email)) {
+        setError("This email is already registered. Please sign in.");
+        setLoading(false);
+        return;
+      }
+      const newUser = {
+        id:"USR"+Date.now(),
+        name:form.name.trim(),
+        email:form.email.toLowerCase(),
+        passwordHash:simpleHash(form.password),
+        role:"student",
+        status:"pending", // Must be approved by admin
+        plan:"free",
+        planExpiry:null,
+        streak:0,
+        createdAt:new Date().toISOString(),
+        lastActive:new Date().toISOString(),
+      };
+      UserStore.add(newUser);
+      setToast({msg:"Registration successful! Awaiting admin approval.",type:"success"});
+      setMode("login");
+      setForm({name:"",email:form.email,password:""});
+    }
+    setLoading(false);
+  };
+
+  return <div style={{minHeight:"100vh",display:"flex",alignItems:"stretch"}}>
+    {/* Left brand panel */}
+    <div style={{flex:"0 0 45%",background:"linear-gradient(160deg,#0a0a0f 0%,#1a0a2e 50%,#0a1a2e 100%)",
+      display:"flex",flexDirection:"column",justifyContent:"center",padding:"60px 56px",position:"relative",overflow:"hidden"}}>
+      <svg style={{position:"absolute",inset:0,opacity:.04}} width="100%" height="100%">
+        <defs><pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5"/>
+        </pattern></defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+      </svg>
+      <div style={{position:"absolute",top:"20%",left:"30%",width:200,height:200,borderRadius:"50%",
+        background:"radial-gradient(circle,rgba(124,58,237,.4),transparent)",filter:"blur(40px)"}}/>
+      <div style={{position:"absolute",bottom:"30%",right:"10%",width:150,height:150,borderRadius:"50%",
+        background:"radial-gradient(circle,rgba(6,182,212,.3),transparent)",filter:"blur(30px)"}}/>
+      <div style={{position:"relative",zIndex:1}}>
+        <div style={{width:60,height:60,borderRadius:16,background:"linear-gradient(135deg,#7c3aed,#06b6d4)",
+          display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,marginBottom:28}}>🎯</div>
+        <h1 style={{fontSize:40,fontWeight:800,lineHeight:1.1,marginBottom:16,color:"#fff",letterSpacing:"-1px"}}>
+          The Smartest<br/>Way to<br/>
+          <span style={{backgroundImage:"linear-gradient(90deg,#a78bfa,#22d3ee)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Ace Exams</span>
+        </h1>
+        <p style={{color:"#a0a0c0",fontSize:15,lineHeight:1.7,maxWidth:320}}>
+          AI-powered exam prep with thousands of MCQs, real exam interface, and detailed analytics.
+        </p>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginTop:32}}>
+          {[{i:"🤖",t:"AI MCQ Generation",d:"1000+ questions/book"},
+            {i:"⏱️",t:"Real Exam Mode",d:"Timer + question palette"},
+            {i:"📊",t:"Deep Analytics",d:"Chapter-wise insights"},
+            {i:"🔒",t:"Secure Platform",d:"Admin-controlled access"}].map(f=>(
+            <div key={f.t} style={{padding:14,borderRadius:12,background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)"}}>
+              <div style={{fontSize:20,marginBottom:4}}>{f.i}</div>
+              <div style={{fontSize:13,fontWeight:700,color:"#e0e0f0"}}>{f.t}</div>
+              <div style={{fontSize:11,color:"#7070a0"}}>{f.d}</div>
+            </div>
+          ))}
+        </div>
+        {/* Security badge */}
+        <div style={{marginTop:24,display:"flex",alignItems:"center",gap:10,padding:"10px 16px",
+          borderRadius:12,background:"rgba(16,185,129,.1)",border:"1px solid rgba(16,185,129,.2)"}}>
+          <span>🔒</span>
+          <span style={{fontSize:12,color:"#10b981",fontWeight:600}}>Admin-verified accounts · Secure payment gateway · 256-bit encryption</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Right form panel */}
+    <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:40,background:"var(--bg)"}}>
+      <div style={{width:"100%",maxWidth:400}}>
+        <div style={{marginBottom:24}}>
+          <h2 style={{fontSize:24,fontWeight:800,marginBottom:4}}>{mode==="login"?"Welcome back":"Create account"}</h2>
+          <p style={{color:"var(--muted)",fontSize:14}}>
+            {mode==="login"?"Sign in to your ExamIQ account":"Register — admin approval required to access"}
+          </p>
+        </div>
+
+        {/* Mode tabs */}
+        <div style={{display:"flex",background:"var(--surface2)",borderRadius:12,padding:4,marginBottom:20}}>
+          {["login","register"].map(m=><button key={m} onClick={()=>{setMode(m);setError("")}} style={{
+            flex:1,padding:"9px 0",borderRadius:9,fontSize:14,fontWeight:700,border:"none",cursor:"pointer",
+            background:mode===m?"var(--accent)":"transparent",
+            color:mode===m?"#fff":"var(--muted)",transition:"all .2s"
+          }}>{m==="login"?"Sign In":"Register"}</button>)}
+        </div>
+
+        <div key={shakeTrigger} style={{display:"flex",flexDirection:"column",gap:14,animation:error?"shake .4s ease":undefined}}>
+          {mode==="register"&&<div>
+            <label className="label">Full Name</label>
+            <input className="input" value={form.name} onChange={e=>setF("name",e.target.value)} placeholder="Your full name"/>
+          </div>}
+          <div>
+            <label className="label">Email Address</label>
+            <input className={`input ${error?"error":""}`} type="email" value={form.email}
+              onChange={e=>setF("email",e.target.value)} placeholder="you@example.com"/>
+          </div>
+          <div>
+            <label className="label">Password {mode==="register"&&<span style={{color:"var(--muted)",textTransform:"none",fontWeight:400}}>(min 8 chars)</span>}</label>
+            <input className={`input ${error?"error":""}`} type="password" value={form.password}
+              onChange={e=>setF("password",e.target.value)} placeholder="••••••••"
+              onKeyDown={e=>e.key==="Enter"&&submit()}/>
+          </div>
+
+          {error && <div style={{padding:"10px 14px",borderRadius:10,background:"rgba(239,68,68,.1)",
+            border:"1px solid rgba(239,68,68,.3)",color:"var(--red)",fontSize:13}}>{error}</div>}
+
+          <button className="btn btn-primary" onClick={submit} disabled={loading}
+            style={{width:"100%",padding:"13px 0",fontSize:15,borderRadius:12,marginTop:4}}>
+            {loading?<><Spinner size={16}/> {mode==="login"?"Verifying...":"Registering..."}</>
+              :mode==="login"?"Sign In →":"Create Account →"}
+          </button>
+
+          {mode==="register"&&<div style={{padding:"12px 16px",borderRadius:12,background:"rgba(234,179,8,.08)",
+            border:"1px solid rgba(234,179,8,.2)",display:"flex",gap:10,alignItems:"flex-start"}}>
+            <span>⏳</span>
+            <div>
+              <p style={{fontSize:13,fontWeight:700,color:"#eab308",marginBottom:2}}>Account Approval Required</p>
+              <p style={{fontSize:12,color:"var(--muted)"}}>New accounts require admin approval before access is granted. This protects platform integrity.</p>
+            </div>
+          </div>}
+
+          <div style={{textAlign:"center",marginTop:4}}>
+            <p style={{fontSize:12,color:"var(--muted)"}}>
+              {mode==="login"
+                ? <><span>Admin? Use </span><code style={{color:"var(--accent2)"}}>admin@examiq.com</code></>
+                : <span>Already have an account? <button onClick={()=>setMode("login")} style={{background:"none",border:"none",color:"var(--accent2)",cursor:"pointer",fontWeight:700,fontFamily:"inherit"}}>Sign In</button></span>
+              }
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PENDING APPROVAL PAGE
+// ══════════════════════════════════════════════════════════
+function PendingPage() {
+  const {setUser, navigate} = useApp();
+  return <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+    <div style={{textAlign:"center",maxWidth:440}}>
+      <div style={{fontSize:72,marginBottom:20}}>⏳</div>
+      <h1 style={{fontSize:26,fontWeight:800,marginBottom:12}}>Awaiting Approval</h1>
+      <p style={{color:"var(--muted)",fontSize:15,lineHeight:1.7,marginBottom:24}}>
+        Your account is pending admin approval. The administrator will review and activate your account shortly.
+        You'll be able to log in once approved.
+      </p>
+      <div style={{padding:16,borderRadius:14,background:"var(--surface)",border:"1px solid var(--border)",marginBottom:24}}>
+        <p style={{fontSize:13,color:"var(--muted)"}}>For urgent access, contact:</p>
+        <p style={{fontWeight:700,color:"var(--accent2)"}}>admin@examiq.com</p>
+      </div>
+      <button className="btn btn-secondary" onClick={()=>{Auth.logout();setUser(null);navigate("login")}}>
+        ← Back to Login
+      </button>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// LOCKED TEST OVERLAY (upgrade prompt)
+// ══════════════════════════════════════════════════════════
+function LockedCard({test, onUpgrade}) {
+  const required = PLANS.find(p=>p.testTier>=test.tier);
+  return <div style={{position:"relative"}}>
+    <div style={{opacity:.4,pointerEvents:"none"}}>
+      <div style={{padding:22,borderRadius:16,background:"var(--surface)",border:"1px solid var(--border)"}}>
+        <h3 style={{fontSize:16,fontWeight:700,marginBottom:4}}>{test.name}</h3>
+        <p style={{fontSize:13,color:"var(--muted)"}}>{test.subject}</p>
+      </div>
+    </div>
+    <div className="lock-overlay">
+      <div style={{fontSize:32}}>🔒</div>
+      <p style={{fontWeight:700,fontSize:14}}>
+        {test.tier===1?"Basic":test.tier===2?"Pro":test.tier===3?"Unlimited":""} Plan Required
+      </p>
+      <button className="btn btn-primary" style={{fontSize:13,padding:"7px 16px"}} onClick={onUpgrade}>
+        Upgrade to Access →
+      </button>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PAGE: STUDENT DASHBOARD
+// ══════════════════════════════════════════════════════════
+function StudentDashboard() {
+  const {user,navigate,setActiveTest} = useApp();
+  const history = JSON.parse(localStorage.getItem(`eiq_history_${user.id}`)||"[]");
+  const plan = PLANS.find(p=>p.id===(user?.plan||'free'))||PLANS[0];
+  const tests = generateTests();
+
+  const stats = useMemo(()=>{
+    if(!history.length) return {avg:0,best:0,total:0,streak:0};
+    const avg = Math.round(history.reduce((a,b)=>a+b.score,0)/history.length);
+    const best = Math.max(...history.map(h=>h.score));
+    return {avg,best,total:history.length,streak:user.streak||0};
+  },[history]);
+
+  const topicAcc = useMemo(()=>{
+    const map={};
+    history.forEach(h=>{
+      if(h.weakTopics) h.weakTopics.forEach(t=>{
+        if(!map[t.name]) map[t.name]={correct:0,total:0};
+        map[t.name].correct+=t.correct; map[t.name].total+=t.total;
+      });
+    });
+    return Object.entries(map).map(([k,v])=>({label:k,value:v.total?Math.round(v.correct/v.total*100):0})).slice(0,5);
+  },[history]);
+
+  return <div style={{display:"flex",flexDirection:"column",gap:20,animation:"fadeUp .4s ease"}}>
+    {/* Plan banner */}
+    {plan.id==="free" && <div style={{padding:16,borderRadius:14,background:"linear-gradient(135deg,rgba(124,58,237,.2),rgba(6,182,212,.1))",
+      border:"1px solid rgba(124,58,237,.3)",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+      <div style={{display:"flex",gap:12,alignItems:"center"}}>
+        <span style={{fontSize:24}}>💎</span>
+        <div>
+          <p style={{fontWeight:700,fontSize:14}}>You're on the Free plan</p>
+          <p style={{fontSize:12,color:"var(--muted)"}}>Upgrade to unlock unlimited tests, AI explanations & more</p>
+        </div>
+      </div>
+      <button className="btn btn-primary" onClick={()=>navigate("pricing")} style={{fontSize:13}}>Upgrade →</button>
+    </div>}
+
+    {/* Stats */}
+    <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14}}>
+      {[{i:"📝",l:"Tests Taken",v:stats.total,c:"#7c3aed"},{i:"📊",l:"Avg Score",v:`${stats.avg}%`,c:"#10b981"},
+        {i:"🏆",l:"Best Score",v:`${stats.best}%`,c:"#f59e0b"},{i:"🔥",l:"Day Streak",v:stats.streak,c:"#f97316"}].map(s=>(
+        <div key={s.l} className="stat-card" style={{padding:20}}>
+          <div style={{width:38,height:38,borderRadius:10,background:`${s.c}20`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginBottom:10}}>{s.i}</div>
+          <div style={{fontSize:26,fontWeight:800,color:s.c}}>{s.v}</div>
+          <div style={{fontSize:13,color:"var(--muted)"}}>{s.l}</div>
+        </div>
+      ))}
+    </div>
+
+    {/* Tests grid */}
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+        <h2 style={{fontSize:18,fontWeight:800}}>Available Tests</h2>
+        <button className="btn btn-ghost" onClick={()=>navigate("tests")} style={{fontSize:13}}>View all →</button>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+        {tests.slice(0,4).map(t=>{
+          const userTier = PLAN_TIER[user?.plan||'free']||0;
+          const locked = t.tier > userTier;
+          if(locked) return <LockedCard key={t.id} test={t} onUpgrade={()=>navigate("pricing")}/>;
+          return <div key={t.id} className="card" style={{padding:20,cursor:"pointer"}}
+            onClick={()=>{setActiveTest(t);navigate("exam")}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
+              <span className={`badge tag-${t.difficulty.toLowerCase()}`}>{t.difficulty}</span>
+              <span style={{fontSize:12,color:"var(--muted)"}}>⏱️ {t.duration} min</span>
+            </div>
+            <h3 style={{fontSize:15,fontWeight:700,marginBottom:4}}>{t.name}</h3>
+            <p style={{fontSize:13,color:"var(--muted)",marginBottom:12}}>{t.subject}</p>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <span style={{fontSize:12,color:"var(--muted)"}}>❓ {t.questions.length} Qs</span>
+              <button className="btn btn-primary" style={{padding:"6px 12px",fontSize:12}}>Start →</button>
+            </div>
+          </div>;
+        })}
+      </div>
+    </div>
+
+    {history.length>0&&<div className="card" style={{padding:20}}>
+      <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>📈 Recent Results</h3>
+      <table className="table">
+        <thead><tr><th>Test</th><th>Score</th><th>Accuracy</th><th>Date</th></tr></thead>
+        <tbody>
+          {history.slice(-5).reverse().map((h,i)=><tr key={i}>
+            <td style={{fontWeight:600}}>{h.testName}</td>
+            <td><span style={{color:h.score>=60?"var(--green)":"var(--red)",fontWeight:700}}>{h.score}%</span></td>
+            <td>{h.accuracy}%</td>
+            <td style={{color:"var(--muted)",fontSize:13}}>{new Date(h.date).toLocaleDateString()}</td>
+          </tr>)}
+        </tbody>
+      </table>
+    </div>}
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PAGE: PRACTICE MCQs
+// ══════════════════════════════════════════════════════════
+function PracticePage() {
+  const {user,navigate} = useApp();
+  const plan = PLANS.find(p=>p.id===(user?.plan||'free'))||PLANS[0];
+  const userTier = PLAN_TIER[user?.plan||'free']||0;
+  const [filter,setFilter] = useState({topic:"All",difficulty:"All"});
+  const [current,setCurrent] = useState(null);
+  const [selected,setSelected] = useState(null);
+  const [revealed,setRevealed] = useState(false);
+  const [count,setCount] = useState(0);
+  const [score,setScore] = useState({correct:0,wrong:0});
+
+  const accessibleMcqs = SAMPLE_MCQS.filter(q=>q.tier<=userTier);
+  const topics = ["All",...new Set(accessibleMcqs.map(q=>q.topic))];
+  const diffs = ["All","Easy","Medium","Hard"];
+
+  const filtered = accessibleMcqs.filter(q=>
+    (filter.topic==="All"||q.topic===filter.topic)&&
+    (filter.difficulty==="All"||q.difficulty===filter.difficulty));
+
+  const limitReached = plan.practiceLimit !== 999999 && count >= plan.practiceLimit;
+
+  const pickRandom = () => {
+    if(limitReached) return;
+    const pool = filtered.filter(q=>!current||q.id!==current.id);
+    if(!pool.length) return;
+    setCurrent(pool[Math.floor(Math.random()*pool.length)]);
+    setSelected(null); setRevealed(false);
+  };
+
+  useEffect(()=>{ if(filtered.length&&!limitReached) pickRandom(); },[filter]);
+
+  const submit = () => {
+    if(selected===null) return;
+    setRevealed(true); setCount(c=>c+1);
+    if(selected===current.correct) setScore(s=>({...s,correct:s.correct+1}));
+    else setScore(s=>({...s,wrong:s.wrong+1}));
+  };
+
+  if(limitReached) return <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:400,gap:16,animation:"fadeUp .4s ease"}}>
+    <div style={{fontSize:56}}>🚫</div>
+    <h2 style={{fontWeight:800,fontSize:20}}>Daily Practice Limit Reached</h2>
+    <p style={{color:"var(--muted)",textAlign:"center",maxWidth:360}}>
+      You've used your {plan.practiceLimit} daily practice MCQs on the <strong>{plan.name}</strong> plan.
+      Upgrade for unlimited practice.
+    </p>
+    <button className="btn btn-primary" onClick={()=>navigate("pricing")}>Upgrade Plan →</button>
+  </div>;
+
+  return <div style={{display:"flex",flexDirection:"column",gap:20,animation:"fadeUp .4s ease"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      <div><h1 style={{fontSize:22,fontWeight:800}}>Practice MCQs</h1>
+        <p style={{fontSize:13,color:"var(--muted)"}}>
+          {plan.practiceLimit===999999?"Unlimited":"Daily:"} {count}/{plan.practiceLimit===999999?"∞":plan.practiceLimit} · {accessibleMcqs.length} questions available
+        </p>
+      </div>
+      <div style={{display:"flex",gap:10}}>
+        {[{v:score.correct,l:"Correct",c:"var(--green)"},{v:score.wrong,l:"Wrong",c:"var(--red)"}].map(s=>(
+          <div key={s.l} className="card" style={{padding:"10px 16px",textAlign:"center"}}>
+            <div style={{fontSize:20,fontWeight:800,color:s.c}}>{s.v}</div>
+            <div style={{fontSize:11,color:"var(--muted)"}}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Filters */}
+    <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+      {[{k:"topic",opts:topics},{k:"difficulty",opts:diffs}].map(({k,opts})=>(
+        <div key={k} style={{display:"flex",gap:6,alignItems:"center"}}>
+          <span style={{fontSize:12,color:"var(--muted)",fontWeight:600,textTransform:"uppercase"}}>{k}:</span>
+          {opts.map(o=><button key={o} onClick={()=>setFilter(f=>({...f,[k]:o}))}
+            style={{background:filter[k]===o?"var(--accent)":"var(--surface2)",
+              color:filter[k]===o?"#fff":"var(--muted)",border:`1px solid ${filter[k]===o?"var(--accent)":"var(--border)"}`,
+              cursor:"pointer",padding:"5px 12px",borderRadius:20,fontSize:12,fontWeight:600,transition:"all .2s"}}>
+            {o}
+          </button>)}
+        </div>
+      ))}
+    </div>
+
+    {current?<div style={{display:"grid",gridTemplateColumns:"1fr 280px",gap:20}}>
+      <div className="card" style={{padding:28}}>
+        <div style={{display:"flex",gap:8,marginBottom:16}}>
+          <span className={`badge tag-${current.difficulty.toLowerCase()}`}>{current.difficulty}</span>
+          <span className="badge" style={{background:"rgba(6,182,212,.1)",color:"var(--accent3)",border:"1px solid rgba(6,182,212,.2)"}}>{current.topic}</span>
+        </div>
+        <p style={{fontSize:17,fontWeight:600,lineHeight:1.6,marginBottom:24}}>{current.question}</p>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          {current.options.map((opt,i)=>{
+            let cls="";
+            if(revealed){if(i===current.correct)cls=" correct";else if(i===selected&&i!==current.correct)cls=" wrong";}
+            else if(i===selected)cls=" selected";
+            return <div key={i} className={`q-option${cls}`} onClick={()=>!revealed&&setSelected(i)}>
+              <div style={{width:28,height:28,borderRadius:8,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13,
+                background:revealed&&i===current.correct?"var(--green)":revealed&&i===selected&&i!==current.correct?"var(--red)":i===selected?"var(--accent)":"var(--surface2)",
+                color:"#fff"}}>{String.fromCharCode(65+i)}</div>
+              <span style={{fontSize:15}}>{opt}</span>
+              {revealed&&i===current.correct&&<span style={{marginLeft:"auto",color:"var(--green)"}}>✓</span>}
+              {revealed&&i===selected&&i!==current.correct&&<span style={{marginLeft:"auto",color:"var(--red)"}}>✗</span>}
+            </div>;
+          })}
+        </div>
+        <div style={{display:"flex",gap:10,marginTop:20}}>
+          {!revealed
+            ?<button className="btn btn-primary" onClick={submit} disabled={selected===null} style={{flex:1}}>Check Answer</button>
+            :<button className="btn btn-primary" onClick={pickRandom} style={{flex:1}}>Next Question →</button>}
+          <button className="btn btn-secondary" onClick={pickRandom}>Skip</button>
+        </div>
+        {revealed&&<div style={{marginTop:20,padding:16,borderRadius:12,background:"rgba(124,58,237,.1)",border:"1px solid rgba(124,58,237,.2)"}}>
+          <div style={{fontSize:12,fontWeight:700,color:"var(--accent2)",marginBottom:6}}>💡 Explanation</div>
+          <p style={{fontSize:14,lineHeight:1.6}}>{current.explanation}</p>
+        </div>}
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:14}}>
+        <div className="card" style={{padding:18}}>
+          <h3 style={{fontSize:14,fontWeight:700,marginBottom:12}}>🎯 Session</h3>
+          <DonutChart pct={score.correct+score.wrong>0?Math.round(score.correct/(score.correct+score.wrong)*100):0} color="var(--accent2)" label="Accuracy"/>
+        </div>
+        {plan.id==="free"&&<div className="card" style={{padding:16,background:"linear-gradient(135deg,rgba(124,58,237,.1),rgba(6,182,212,.05))",border:"1px solid rgba(124,58,237,.2)"}}>
+          <div style={{fontSize:20,marginBottom:6}}>⚡</div>
+          <p style={{fontSize:13,fontWeight:700,marginBottom:4}}>More Questions</p>
+          <p style={{fontSize:12,color:"var(--muted)",marginBottom:10}}>Upgrade for unlimited practice & harder questions</p>
+          <button className="btn btn-primary" style={{width:"100%",fontSize:12}} onClick={()=>navigate("pricing")}>Upgrade →</button>
+        </div>}
+      </div>
+    </div>:<div className="card" style={{padding:40,textAlign:"center"}}>
+      <div style={{fontSize:40,marginBottom:12}}>🎯</div>
+      <p style={{color:"var(--muted)"}}>No questions match your filter</p>
+    </div>}
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PAGE: TESTS
+// ══════════════════════════════════════════════════════════
+function TestsPage() {
+  const {navigate,setActiveTest,user} = useApp();
+  const tests = generateTests();
+  const userTier = PLAN_TIER[user?.plan||'free']||0;
+
+  return <div style={{animation:"fadeUp .4s ease"}}>
+    <div style={{marginBottom:20}}>
+      <h1 style={{fontSize:22,fontWeight:800}}>Test Centre</h1>
+      <p style={{fontSize:13,color:"var(--muted)"}}>Choose a test · Your plan: <PlanBadge plan={user?.plan||'free'}/></p>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+      {tests.map(t=>{
+        const locked = t.tier > userTier;
+        const tierLabel = ["Free","Basic","Pro","Unlimited"][t.tier]||"Free";
+        if(locked) return <div key={t.id} style={{position:"relative"}}>
+          <div style={{opacity:.4,pointerEvents:"none"}} className="card">
+            <div style={{padding:22}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:12}}>
+                <span className={`badge tag-${t.difficulty.toLowerCase()}`}>{t.difficulty}</span>
+                <span className={`badge tag-${tierLabel.toLowerCase()}`}>🔒 {tierLabel}</span>
+              </div>
+              <h3 style={{fontSize:16,fontWeight:700,marginBottom:4}}>{t.name}</h3>
+              <p style={{fontSize:13,color:"var(--muted)"}}>{t.subject}</p>
+            </div>
+          </div>
+          <div className="lock-overlay">
+            <div style={{fontSize:28}}>🔒</div>
+            <p style={{fontWeight:700,fontSize:14}}>{tierLabel} Plan Required</p>
+            <button className="btn btn-primary" style={{fontSize:12,padding:"7px 14px"}} onClick={()=>navigate("pricing")}>Upgrade →</button>
+          </div>
+        </div>;
+        return <div key={t.id} className="card" style={{padding:22,cursor:"pointer"}} onClick={()=>{setActiveTest(t);navigate("exam")}}>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:12}}>
+            <span className={`badge tag-${t.difficulty.toLowerCase()}`}>{t.difficulty}</span>
+            <span style={{fontSize:12,color:"var(--muted)"}}>⏱️ {t.duration} min</span>
+          </div>
+          <h3 style={{fontSize:16,fontWeight:700,marginBottom:4}}>{t.name}</h3>
+          <p style={{fontSize:13,color:"var(--muted)",marginBottom:14}}>{t.subject}</p>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <span style={{fontSize:12,color:"var(--muted)"}}>❓ {t.questions.length} questions · 👥 {t.totalAttempts.toLocaleString()}</span>
+            <button className="btn btn-primary" style={{padding:"7px 14px",fontSize:13}} onClick={e=>{e.stopPropagation();setActiveTest(t);navigate("exam");}}>Start</button>
+          </div>
+        </div>;
+      })}
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PAGE: EXAM
+// ══════════════════════════════════════════════════════════
+function ExamPage() {
+  const {activeTest,navigate,setTestResult,user} = useApp();
+  const [started,setStarted] = useState(false);
+  const [answers,setAnswers] = useState({});
+  const [current,setCurrent] = useState(0);
+  const [marked,setMarked] = useState(new Set());
+  const [timeLeft,setTimeLeft] = useState(0);
+  const [confirmSub,setConfirmSub] = useState(false);
+
+  const test = activeTest;
+  if(!test) return <div style={{padding:40,textAlign:"center"}}><p style={{color:"var(--muted)"}}>No test selected.</p><button className="btn btn-primary" onClick={()=>navigate("tests")}>Browse Tests</button></div>;
+
+  const qs = test.questions;
+  const total = qs.length;
+  const q = qs[current];
+  const answered = Object.keys(answers).length;
+  const crit = timeLeft<300;
+
+  useEffect(()=>{ if(started) setTimeLeft(test.duration*60); },[started]);
+  useEffect(()=>{
+    if(!started) return;
+    const t = setInterval(()=>setTimeLeft(s=>{if(s<=1){clearInterval(t);submit();return 0;}return s-1;}),1000);
+    return()=>clearInterval(t);
+  },[started]);
+
+  const fmt = s => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+
+  const submit = () => {
+    let correct=0,wrong=0,skipped=0;
+    qs.forEach((q,i)=>{ if(answers[i]===undefined) skipped++; else if(answers[i]===q.correct) correct++; else wrong++; });
+    const score=Math.round(correct/total*100);
+    const accuracy=answered>0?Math.round(correct/answered*100):0;
+    const weakTopics=[...new Set(qs.map(q=>q.topic))].map(topic=>{
+      const tqs=qs.filter((q,i)=>q.topic===topic);
+      const tc=tqs.filter((q,i)=>answers[qs.indexOf(q)]===q.correct).length;
+      return{name:topic,correct:tc,total:tqs.length,accuracy:tqs.length?Math.round(tc/tqs.length*100):0};
+    }).filter(t=>t.total>0);
+    const result={testName:test.name,score,correct,wrong,skipped,accuracy,totalQuestions:total,timeTaken:test.duration*60-timeLeft,weakTopics,date:new Date().toISOString(),answers};
+    const hist=JSON.parse(localStorage.getItem(`eiq_history_${user.id}`)||"[]");
+    hist.push(result); localStorage.setItem(`eiq_history_${user.id}`,JSON.stringify(hist));
+    UserStore.update(user.id,{lastActive:new Date().toISOString()});
+    setTestResult(result); navigate("result");
+  };
+
+  const paletteClass = i => {
+    if(marked.has(i)&&answers[i]!==undefined) return "p-marked-answered";
+    if(marked.has(i)) return "p-marked";
+    if(answers[i]!==undefined) return "p-answered";
+    if(i===current&&started) return "p-visited";
+    return "p-not-visited";
+  };
+
+  if(!started) return <div className="overlay" style={{position:"fixed"}}>
+    <div className="modal" style={{textAlign:"center",maxWidth:440}}>
+      <div style={{fontSize:40,marginBottom:12}}>📝</div>
+      <h1 style={{fontSize:20,fontWeight:800,marginBottom:6}}>{test.name}</h1>
+      <p style={{color:"var(--muted)",fontSize:14,marginBottom:24}}>{test.subject}</p>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:24}}>
+        {[{i:"❓",l:"Questions",v:total},{i:"⏱️",l:"Duration",v:`${test.duration} min`},{i:"🏆",l:"Marking",v:"+1 / 0"}].map(s=>(
+          <div key={s.l} style={{padding:14,borderRadius:12,background:"var(--surface2)"}}>
+            <div style={{fontSize:20,marginBottom:4}}>{s.i}</div>
+            <div style={{fontSize:16,fontWeight:800}}>{s.v}</div>
+            <div style={{fontSize:11,color:"var(--muted)"}}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{display:"flex",gap:10}}>
+        <button className="btn btn-secondary" onClick={()=>navigate("tests")} style={{flex:"0 0 auto"}}>← Back</button>
+        <button className="btn btn-primary" onClick={()=>setStarted(true)} style={{flex:1,fontSize:15}}>🚀 Begin Test</button>
+      </div>
+    </div>
+  </div>;
+
+  return <div style={{display:"flex",flexDirection:"column",minHeight:"calc(100vh - 60px)"}}>
+    {/* Exam top bar */}
+    <div style={{background:"var(--surface)",borderBottom:"1px solid var(--border)",padding:"10px 20px",
+      display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexShrink:0}}>
+      <div><p style={{fontWeight:700,fontSize:14}}>{test.name}</p><p style={{fontSize:12,color:"var(--muted)"}}>Q {current+1}/{total}</p></div>
+      <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 16px",borderRadius:12,
+        background:crit?"rgba(239,68,68,.15)":"var(--surface2)",color:crit?"var(--red)":"var(--text)",
+        fontWeight:800,fontSize:20,fontFamily:"JetBrains Mono,monospace",border:`1px solid ${crit?"var(--red)":"var(--border)"}`}}>
+        ⏱ {fmt(timeLeft)}
+      </div>
+      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+        <span style={{fontSize:12,color:"var(--muted)"}}>✅ <strong style={{color:"var(--green)"}}>{answered}</strong> / {total}</span>
+        <button className="btn btn-success" onClick={()=>setConfirmSub(true)} style={{fontSize:12,padding:"6px 14px"}}>Submit ✓</button>
+      </div>
+    </div>
+
+    <div style={{display:"flex",flex:1,overflow:"hidden"}}>
+      <div style={{flex:1,padding:24,overflowY:"auto"}}>
+        {q&&<div style={{maxWidth:720}}>
+          <div style={{display:"flex",gap:8,marginBottom:16}}>
+            <span className="badge" style={{background:"rgba(124,58,237,.15)",color:"var(--accent2)",border:"1px solid rgba(124,58,237,.25)"}}>{q.topic}</span>
+            <span className={`badge tag-${q.difficulty.toLowerCase()}`}>{q.difficulty}</span>
+          </div>
+          <div className="card" style={{padding:22,marginBottom:20}}><p style={{fontSize:17,fontWeight:600,lineHeight:1.7}}>{q.question}</p></div>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {q.options.map((opt,i)=><div key={i} className={`q-option${answers[current]===i?" selected":""}`}
+              onClick={()=>setAnswers({...answers,[current]:i})}>
+              <div style={{width:30,height:30,borderRadius:8,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13,
+                background:answers[current]===i?"var(--accent)":"var(--surface2)",color:answers[current]===i?"#fff":"var(--muted)"}}>{String.fromCharCode(65+i)}</div>
+              <span style={{fontSize:15}}>{opt}</span>
+            </div>)}
+          </div>
+          <div style={{display:"flex",gap:10,marginTop:20}}>
+            <button className="btn btn-secondary" onClick={()=>setCurrent(Math.max(0,current-1))} disabled={current===0}>← Prev</button>
+            <button className={`btn ${marked.has(current)?"btn-danger":"btn-secondary"}`}
+              onClick={()=>{const m=new Set(marked);m.has(current)?m.delete(current):m.add(current);setMarked(m);}}>
+              🚩 {marked.has(current)?"Unmark":"Mark"}
+            </button>
+            <button className="btn btn-secondary" onClick={()=>{const a={...answers};delete a[current];setAnswers(a);}}>Clear</button>
+            <button className="btn btn-primary" style={{marginLeft:"auto"}}
+              onClick={()=>current<total-1?setCurrent(current+1):setConfirmSub(true)}>
+              {current<total-1?"Next →":"Submit ✓"}
+            </button>
+          </div>
+        </div>}
+      </div>
+      {/* Palette */}
+      <div style={{width:200,borderLeft:"1px solid var(--border)",padding:14,overflowY:"auto",background:"var(--surface)"}}>
+        <p style={{fontSize:13,fontWeight:700,marginBottom:12}}>Question Palette</p>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:5,marginBottom:12}}>
+          {qs.map((_,i)=><button key={i} className={`palette-btn ${paletteClass(i)}`}
+            onClick={()=>setCurrent(i)} style={{outline:i===current?"2px solid var(--accent2)":undefined,outlineOffset:2}}>{i+1}</button>)}
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:5,fontSize:11}}>
+          {[{c:"var(--green)",l:"Answered"},{c:"var(--red)",l:"Not Answered"},{c:"var(--orange)",l:"Marked"}].map(x=>(
+            <div key={x.l} style={{display:"flex",alignItems:"center",gap:6}}>
+              <div style={{width:10,height:10,borderRadius:2,background:x.c,flexShrink:0}}/><span style={{color:"var(--muted)"}}>{x.l}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    {confirmSub&&<div className="overlay"><div className="modal" style={{textAlign:"center",maxWidth:380}}>
+      <div style={{fontSize:40,marginBottom:12}}>📤</div>
+      <h2 style={{fontSize:18,fontWeight:800,marginBottom:8}}>Submit Test?</h2>
+      <p style={{color:"var(--muted)",marginBottom:8}}>Answered: <strong style={{color:"var(--green)"}}>{answered}</strong> / {total}</p>
+      <p style={{color:"var(--muted)",marginBottom:20,fontSize:13}}>Unanswered questions will be marked as skipped.</p>
+      <div style={{display:"flex",gap:10}}>
+        <button className="btn btn-secondary" onClick={()=>setConfirmSub(false)} style={{flex:1}}>Continue</button>
+        <button className="btn btn-success" onClick={submit} style={{flex:1}}>Submit ✓</button>
+      </div>
+    </div></div>}
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PAGE: RESULT
+// ══════════════════════════════════════════════════════════
+function ResultPage() {
+  const {testResult,navigate} = useApp();
+  const r = testResult;
+  if(!r) return <div style={{padding:40,textAlign:"center"}}><p style={{color:"var(--muted)"}}>No result yet.</p><button className="btn btn-primary" onClick={()=>navigate("tests")}>Take a Test</button></div>;
+  const grade = r.score>=80?"A":r.score>=60?"B":r.score>=40?"C":"D";
+  const gradeColor = r.score>=80?"var(--green)":r.score>=60?"var(--yellow)":r.score>=40?"var(--orange)":"var(--red)";
+  return <div style={{display:"flex",flexDirection:"column",gap:20,animation:"fadeUp .4s ease"}}>
+    <div style={{textAlign:"center",padding:"32px 0"}}>
+      <div style={{fontSize:64,marginBottom:8}}>
+        {r.score>=80?"🏆":r.score>=60?"🥇":r.score>=40?"📊":"📈"}
+      </div>
+      <h1 style={{fontSize:28,fontWeight:800,marginBottom:4,color:gradeColor}}>{r.score}%</h1>
+      <p style={{color:"var(--muted)",fontSize:15}}>{r.testName}</p>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14}}>
+      {[{l:"Correct",v:r.correct,c:"var(--green)"},{l:"Wrong",v:r.wrong,c:"var(--red)"},
+        {l:"Skipped",v:r.skipped,c:"var(--muted)"},{l:"Accuracy",v:`${r.accuracy}%`,c:"var(--accent2)"}].map(s=>(
+        <div key={s.l} className="stat-card" style={{padding:20,textAlign:"center"}}>
+          <div style={{fontSize:26,fontWeight:800,color:s.c}}>{s.v}</div>
+          <div style={{fontSize:13,color:"var(--muted)"}}>{s.l}</div>
+        </div>
+      ))}
+    </div>
+    {r.weakTopics&&r.weakTopics.length>0&&<div className="card" style={{padding:20}}>
+      <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>📊 Chapter Breakdown</h3>
+      <table className="table">
+        <thead><tr><th>Topic</th><th>Correct</th><th>Total</th><th>Accuracy</th></tr></thead>
+        <tbody>{r.weakTopics.map(t=><tr key={t.name}>
+          <td style={{fontWeight:600}}>{t.name}</td>
+          <td style={{color:"var(--green)"}}>{t.correct}</td>
+          <td>{t.total}</td>
+          <td><span style={{color:t.accuracy>=60?"var(--green)":"var(--red)",fontWeight:700}}>{t.accuracy}%</span></td>
+        </tr>)}</tbody>
+      </table>
+    </div>}
+    <div style={{display:"flex",gap:10,justifyContent:"center"}}>
+      <button className="btn btn-secondary" onClick={()=>navigate("tests")}>← More Tests</button>
+      <button className="btn btn-primary" onClick={()=>navigate("dashboard")}>Dashboard →</button>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PAGE: ANALYTICS
+// ══════════════════════════════════════════════════════════
+function AnalyticsPage() {
+  const {user} = useApp();
+  const history = JSON.parse(localStorage.getItem(`eiq_history_${user.id}`)||"[]");
+  if(!history.length) return <div style={{padding:40,textAlign:"center"}}>
+    <div style={{fontSize:40,marginBottom:12}}>📊</div>
+    <p style={{color:"var(--muted)"}}>No data yet. Take some tests to see analytics.</p>
+  </div>;
+  const avg = Math.round(history.reduce((a,b)=>a+b.score,0)/history.length);
+  const topicMap={};
+  history.forEach(h=>h.weakTopics?.forEach(t=>{if(!topicMap[t.name])topicMap[t.name]={c:0,tot:0};topicMap[t.name].c+=t.correct;topicMap[t.name].tot+=t.total;}));
+  const topics = Object.entries(topicMap).map(([k,v])=>({name:k,acc:v.tot?Math.round(v.c/v.tot*100):0}));
+  return <div style={{display:"flex",flexDirection:"column",gap:20,animation:"fadeUp .4s ease"}}>
+    <div><h1 style={{fontSize:22,fontWeight:800}}>Analytics</h1><p style={{fontSize:13,color:"var(--muted)"}}>Your performance overview</p></div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14}}>
+      {[{l:"Tests Taken",v:history.length,c:"#7c3aed"},{l:"Average Score",v:`${avg}%`,c:"#10b981"},{l:"Best Score",v:`${Math.max(...history.map(h=>h.score))}%`,c:"#f59e0b"}].map(s=>(
+        <div key={s.l} className="stat-card" style={{padding:20}}>
+          <div style={{fontSize:26,fontWeight:800,color:s.c}}>{s.v}</div>
+          <div style={{fontSize:13,color:"var(--muted)"}}>{s.l}</div>
+        </div>
+      ))}
+    </div>
+    {topics.length>0&&<div className="card" style={{padding:20}}>
+      <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>Chapter Accuracy</h3>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {topics.map(t=><div key={t.name}>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+            <span style={{fontSize:13,fontWeight:600}}>{t.name}</span>
+            <span style={{fontSize:13,fontWeight:700,color:t.acc>=60?"var(--green)":"var(--red)"}}>{t.acc}%</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{width:`${t.acc}%`,background:t.acc>=60?"var(--green)":t.acc>=40?"var(--yellow)":"var(--red)"}}/>
+          </div>
+        </div>)}
+      </div>
+    </div>}
+    <div className="card" style={{padding:20}}>
+      <h3 style={{fontSize:15,fontWeight:700,marginBottom:14}}>Score History</h3>
+      <table className="table">
+        <thead><tr><th>Test</th><th>Score</th><th>Accuracy</th><th>Date</th></tr></thead>
+        <tbody>{history.slice(-10).reverse().map((h,i)=><tr key={i}>
+          <td style={{fontWeight:600,maxWidth:200}}>{h.testName}</td>
+          <td><span style={{color:h.score>=60?"var(--green)":"var(--red)",fontWeight:700}}>{h.score}%</span></td>
+          <td>{h.accuracy}%</td>
+          <td style={{color:"var(--muted)",fontSize:13}}>{new Date(h.date).toLocaleDateString()}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// PAGE: LEADERBOARD
+// ══════════════════════════════════════════════════════════
+function LeaderboardPage() {
+  const {user,navigate} = useApp();
+  const userTier = PLAN_TIER[user?.plan||'free']||0;
+  if(userTier < 2) return <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:400,gap:16,animation:"fadeUp .4s ease"}}>
+    <div style={{fontSize:56}}>🏆</div>
+    <h2 style={{fontWeight:800}}>Leaderboard — Pro Feature</h2>
+    <p style={{color:"var(--muted)",textAlign:"center",maxWidth:360}}>Upgrade to Pro or Unlimited to access the leaderboard and see where you rank among all students.</p>
+    <button className="btn btn-primary" onClick={()=>navigate("pricing")}>Upgrade to Pro →</button>
+  </div>;
+
+  const history = JSON.parse(localStorage.getItem(`eiq_history_${user.id}`)||"[]");
+  const myScore = history.length?Math.round(history.reduce((a,b)=>a+b.score,0)/history.length):0;
+  const board = [...MOCK_LEADERBOARD,{rank:"—",name:user.name,score:myScore,tests:history.length,accuracy:myScore,streak:0,isMe:true}]
+    .sort((a,b)=>b.score-a.score).map((e,i)=>({...e,rank:e.isMe?i+1:e.rank}));
+  return <div style={{animation:"fadeUp .4s ease"}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:800}}>Leaderboard 🏆</h1><p style={{fontSize:13,color:"var(--muted)"}}>Top performers this month</p></div>
+    <div className="card" style={{overflow:"hidden"}}>
+      <table className="table">
+        <thead><tr><th>Rank</th><th>Student</th><th>Avg Score</th><th>Tests</th><th>Streak</th></tr></thead>
+        <tbody>{board.map((e,i)=><tr key={i} style={{background:e.isMe?"rgba(124,58,237,.08)":undefined}}>
+          <td><span style={{fontWeight:900,fontSize:15,color:e.rank===1?"#f59e0b":e.rank===2?"#94a3b8":e.rank===3?"#b45309":"var(--muted)"}}>
+            {e.rank===1?"🥇":e.rank===2?"🥈":e.rank===3?"🥉":`#${e.rank}`}
+          </span></td>
+          <td><div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:30,height:30,borderRadius:8,background:e.isMe?"var(--accent)":"var(--surface2)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:13,color:e.isMe?"#fff":"var(--muted)"}}>{e.name[0]}</div>
+            <span style={{fontWeight:600,color:e.isMe?"var(--accent2)":undefined}}>{e.name}{e.isMe?" (You)":""}</span>
+          </div></td>
+          <td><span style={{color:e.score>=80?"var(--green)":e.score>=60?"var(--yellow)":"var(--red)",fontWeight:700}}>{e.score}%</span></td>
+          <td style={{color:"var(--muted)"}}>{e.tests}</td>
+          <td>🔥 {e.streak}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN: DASHBOARD
+// ══════════════════════════════════════════════════════════
+function AdminDashboard() {
+  const {navigate} = useApp();
+  const users = UserStore.getAll();
+  const payments = PaymentStore.getAll();
+  const totalRevenue = payments.filter(p=>p.status==="success").reduce((a,p)=>a+p.amount,0);
+  const pending = users.filter(u=>u.status==="pending").length;
+  const active = users.filter(u=>u.status==="active").length;
+  const banned = users.filter(u=>u.status==="banned").length;
+
+  return <div style={{display:"flex",flexDirection:"column",gap:20,animation:"fadeUp .4s ease"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      <div><h1 style={{fontSize:22,fontWeight:800}}>Admin Overview</h1><p style={{fontSize:13,color:"var(--muted)"}}>Platform management</p></div>
+      {pending>0&&<button className="btn btn-warning" onClick={()=>navigate("admin-users")} style={{gap:8}}>
+        ⏳ {pending} Pending Approval{pending>1?"s":""}
+      </button>}
+    </div>
+
+    <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14}}>
+      {[
+        {i:"👥",l:"Total Users",v:users.length,c:"#7c3aed",sub:`${active} active`},
+        {i:"⏳",l:"Pending",v:pending,c:"#eab308",action:()=>navigate("admin-users")},
+        {i:"🚫",l:"Banned",v:banned,c:"#ef4444"},
+        {i:"💰",l:"Revenue",v:`₹${totalRevenue.toLocaleString()}`,c:"#10b981",sub:`${payments.length} transactions`},
+      ].map(s=>(
+        <div key={s.l} className="stat-card" style={{padding:20,cursor:s.action?"pointer":undefined}} onClick={s.action}>
+          <div style={{width:38,height:38,borderRadius:10,background:`${s.c}20`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginBottom:10}}>{s.i}</div>
+          <div style={{fontSize:26,fontWeight:800,color:s.c}}>{s.v}</div>
+          <div style={{fontSize:13,color:"var(--muted)"}}>{s.l}</div>
+          {s.sub&&<div style={{fontSize:11,color:s.c,marginTop:2}}>{s.sub}</div>}
+        </div>
+      ))}
+    </div>
+
+    {/* Pending approvals alert */}
+    {pending>0&&<div style={{padding:16,borderRadius:14,background:"rgba(234,179,8,.1)",border:"1px solid rgba(234,179,8,.3)"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <div>
+          <p style={{fontWeight:700,color:"#eab308"}}>⏳ {pending} user{pending>1?"s":""} awaiting your approval</p>
+          <p style={{fontSize:13,color:"var(--muted)",marginTop:4}}>New registrations require admin approval before students can access the platform.</p>
+        </div>
+        <button className="btn btn-warning" onClick={()=>navigate("admin-users")}>Review Now →</button>
+      </div>
+    </div>}
+
+    {/* Recent users */}
+    <div className="card" style={{overflow:"hidden"}}>
+      <div style={{padding:"16px 20px",borderBottom:"1px solid var(--border)",display:"flex",justifyContent:"space-between"}}>
+        <h3 style={{fontWeight:700}}>👥 Recent Registrations</h3>
+        <button className="btn btn-secondary" style={{fontSize:13}} onClick={()=>navigate("admin-users")}>View All</button>
+      </div>
+      {users.length===0?<div style={{padding:24,textAlign:"center",color:"var(--muted)"}}>No users yet</div>:
+      <table className="table">
+        <thead><tr><th>Name</th><th>Email</th><th>Plan</th><th>Status</th><th>Joined</th></tr></thead>
+        <tbody>{users.slice(-5).reverse().map(u=><tr key={u.id}>
+          <td style={{fontWeight:600}}>{u.name}</td>
+          <td style={{color:"var(--muted)",fontSize:13}}>{u.email}</td>
+          <td><PlanBadge plan={u.plan||"free"}/></td>
+          <td><span className={`status-${u.status}`}>{u.status}</span></td>
+          <td style={{color:"var(--muted)",fontSize:12}}>{new Date(u.createdAt).toLocaleDateString()}</td>
+        </tr>)}</tbody>
+      </table>}
+    </div>
+
+    {/* Recent payments */}
+    {payments.length>0&&<div className="card" style={{overflow:"hidden"}}>
+      <div style={{padding:"16px 20px",borderBottom:"1px solid var(--border)",display:"flex",justifyContent:"space-between"}}>
+        <h3 style={{fontWeight:700}}>💰 Recent Payments</h3>
+        <button className="btn btn-secondary" style={{fontSize:13}} onClick={()=>navigate("admin-payments")}>View All</button>
+      </div>
+      <table className="table">
+        <thead><tr><th>User</th><th>Plan</th><th>Amount</th><th>Txn ID</th><th>Date</th></tr></thead>
+        <tbody>{payments.slice(-5).reverse().map(p=><tr key={p.id}>
+          <td style={{fontWeight:600}}>{p.userName}</td>
+          <td><PlanBadge plan={p.plan}/></td>
+          <td style={{color:"var(--green)",fontWeight:700}}>₹{p.amount}</td>
+          <td style={{fontFamily:"JetBrains Mono,monospace",fontSize:12,color:"var(--muted)"}}>{p.txnId}</td>
+          <td style={{color:"var(--muted)",fontSize:12}}>{new Date(p.date).toLocaleDateString()}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>}
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN: USER MANAGEMENT
+// ══════════════════════════════════════════════════════════
+function AdminUsers() {
+  const {setToast} = useApp();
+  const [users, setUsers] = useState(UserStore.getAll());
+  const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [confirmBan, setConfirmBan] = useState(null); // user to ban
+  const [banReason, setBanReason] = useState("");
+
+  const refresh = () => setUsers(UserStore.getAll());
+
+  const admit = (u) => {
+    UserStore.update(u.id, {status:"active"});
+    setToast({msg:`✅ ${u.name} approved and activated`,type:"success"});
+    refresh();
+  };
+
+  const ban = () => {
+    if(!confirmBan) return;
+    UserStore.update(confirmBan.id, {status:"banned", banReason, bannedAt:new Date().toISOString()});
+    Auth.logout(); // force logout if they're online
+    setToast({msg:`🚫 ${confirmBan.name} has been banned`,type:"warning"});
+    setConfirmBan(null); setBanReason("");
+    refresh();
+  };
+
+  const unban = (u) => {
+    UserStore.update(u.id, {status:"active", banReason:null, bannedAt:null});
+    setToast({msg:`✅ ${u.name} has been unbanned`,type:"success"});
+    refresh();
+  };
+
+  const deleteUser = (u) => {
+    if(!window.confirm(`Delete ${u.name}? This cannot be undone.`)) return;
+    UserStore.delete(u.id);
+    setToast({msg:`🗑️ ${u.name} deleted`,type:"info"});
+    refresh();
+  };
+
+  const filtered = users.filter(u=>{
+    const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = filterStatus==="all" || u.status===filterStatus;
+    return matchSearch && matchStatus;
+  });
+
+  const pending = users.filter(u=>u.status==="pending");
+
+  return <div style={{display:"flex",flexDirection:"column",gap:20,animation:"fadeUp .4s ease"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      <div>
+        <h1 style={{fontSize:22,fontWeight:800}}>User Management</h1>
+        <p style={{fontSize:13,color:"var(--muted)"}}>Admit, manage, and control student access</p>
+      </div>
+      <div style={{display:"flex",gap:10,alignItems:"center"}}>
+        {pending.length>0&&<span className="badge" style={{background:"rgba(234,179,8,.15)",color:"#eab308",border:"1px solid rgba(234,179,8,.3)"}}>
+          ⏳ {pending.length} pending
+        </span>}
+      </div>
+    </div>
+
+    {/* Pending approvals highlighted section */}
+    {pending.length>0&&<div style={{borderRadius:14,border:"2px solid rgba(234,179,8,.4)",overflow:"hidden"}}>
+      <div style={{padding:"12px 20px",background:"rgba(234,179,8,.1)",borderBottom:"1px solid rgba(234,179,8,.3)"}}>
+        <h3 style={{fontWeight:700,color:"#eab308"}}>⏳ Pending Approval ({pending.length})</h3>
+        <p style={{fontSize:12,color:"var(--muted)",marginTop:2}}>These users have registered and are waiting for your approval to access the platform.</p>
+      </div>
+      <table className="table">
+        <thead><tr><th>Name</th><th>Email</th><th>Registered</th><th>Actions</th></tr></thead>
+        <tbody>{pending.map(u=><tr key={u.id} style={{background:"rgba(234,179,8,.03)"}}>
+          <td style={{fontWeight:600}}>{u.name}</td>
+          <td style={{color:"var(--muted)"}}>{u.email}</td>
+          <td style={{color:"var(--muted)",fontSize:12}}>{new Date(u.createdAt).toLocaleString()}</td>
+          <td><div style={{display:"flex",gap:8}}>
+            <button className="action-admit" onClick={()=>admit(u)}>✓ Admit</button>
+            <button className="action-ban" onClick={()=>setConfirmBan(u)}>✗ Reject & Ban</button>
+          </div></td>
+        </tr>)}</tbody>
+      </table>
+    </div>}
+
+    {/* All users with filters */}
+    <div className="card" style={{overflow:"hidden"}}>
+      <div style={{padding:"14px 20px",borderBottom:"1px solid var(--border)",display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
+        <input className="input" style={{maxWidth:280}} placeholder="Search by name or email..." value={search} onChange={e=>setSearch(e.target.value)}/>
+        <div style={{display:"flex",gap:6}}>
+          {["all","active","pending","banned"].map(s=>(
+            <button key={s} onClick={()=>setFilterStatus(s)} style={{
+              padding:"6px 14px",borderRadius:8,fontSize:12,fontWeight:700,border:"1px solid",cursor:"pointer",
+              background:filterStatus===s?"var(--accent)":"var(--surface2)",
+              color:filterStatus===s?"#fff":"var(--muted)",
+              borderColor:filterStatus===s?"var(--accent)":"var(--border)",transition:"all .2s"
+            }}>{s.charAt(0).toUpperCase()+s.slice(1)} {s==="all"?`(${users.length})`:""}</button>
+          ))}
+        </div>
+        <span style={{marginLeft:"auto",fontSize:13,color:"var(--muted)"}}>{filtered.length} users</span>
+      </div>
+      {filtered.length===0?<div style={{padding:40,textAlign:"center",color:"var(--muted)"}}>No users found</div>:
+      <table className="table">
+        <thead><tr><th>User</th><th>Plan</th><th>Status</th><th>Joined</th><th>Last Active</th><th>Actions</th></tr></thead>
+        <tbody>{filtered.map(u=><tr key={u.id}>
+          <td><div style={{display:"flex",flexDirection:"column"}}>
+            <span style={{fontWeight:600}}>{u.name}</span>
+            <span style={{fontSize:12,color:"var(--muted)"}}>{u.email}</span>
+          </div></td>
+          <td><PlanBadge plan={u.plan||"free"}/></td>
+          <td><span className={`status-${u.status}`}>{u.status}</span>
+            {u.banReason&&<div style={{fontSize:11,color:"var(--red)",marginTop:2}}>Reason: {u.banReason}</div>}
+          </td>
+          <td style={{color:"var(--muted)",fontSize:12}}>{new Date(u.createdAt).toLocaleDateString()}</td>
+          <td style={{color:"var(--muted)",fontSize:12}}>{u.lastActive?new Date(u.lastActive).toLocaleDateString():"Never"}</td>
+          <td><div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+            {u.status==="pending"&&<button className="action-admit" onClick={()=>admit(u)}>✓ Admit</button>}
+            {u.status==="active"&&<button className="action-ban" onClick={()=>setConfirmBan(u)}>🚫 Ban</button>}
+            {u.status==="banned"&&<button className="action-unban" onClick={()=>unban(u)}>✓ Unban</button>}
+            <button onClick={()=>deleteUser(u)} style={{background:"transparent",color:"var(--muted)",border:"none",cursor:"pointer",fontSize:12,padding:"5px 8px",borderRadius:6,transition:"all .2s"}}
+              onMouseOver={e=>e.target.style.color="var(--red)"} onMouseOut={e=>e.target.style.color="var(--muted)"}>
+              🗑️ Delete
+            </button>
+          </div></td>
+        </tr>)}</tbody>
+      </table>}
+    </div>
+
+    {/* Ban modal */}
+    {confirmBan&&<div className="overlay">
+      <div className="modal" style={{maxWidth:420}}>
+        <div style={{fontSize:48,textAlign:"center",marginBottom:12}}>🚫</div>
+        <h2 style={{fontSize:18,fontWeight:800,textAlign:"center",marginBottom:6}}>Ban User</h2>
+        <p style={{color:"var(--muted)",textAlign:"center",marginBottom:20}}>
+          You are about to ban <strong style={{color:"var(--text)"}}>{confirmBan.name}</strong> ({confirmBan.email}).
+          They will be immediately logged out and unable to sign in.
+        </p>
+        <div style={{marginBottom:16}}>
+          <label className="label">Reason for ban (optional)</label>
+          <input className="input" value={banReason} onChange={e=>setBanReason(e.target.value)} placeholder="e.g. Violated terms of service"/>
+        </div>
+        <div style={{display:"flex",gap:10}}>
+          <button className="btn btn-secondary" onClick={()=>{setConfirmBan(null);setBanReason("")}} style={{flex:1}}>Cancel</button>
+          <button className="btn btn-danger" onClick={ban} style={{flex:1}}>🚫 Confirm Ban</button>
+        </div>
+      </div>
+    </div>}
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN: PAYMENTS
+// ══════════════════════════════════════════════════════════
+function AdminPayments() {
+  const payments = PaymentStore.getAll();
+  const total = payments.filter(p=>p.status==="success").reduce((a,p)=>a+p.amount,0);
+  const byPlan = PLANS.slice(1).map(p=>({
+    ...p, count:payments.filter(x=>x.plan===p.id).length,
+    revenue:payments.filter(x=>x.plan===p.id).reduce((a,x)=>a+x.amount,0)
+  }));
+
+  return <div style={{display:"flex",flexDirection:"column",gap:20,animation:"fadeUp .4s ease"}}>
+    <div><h1 style={{fontSize:22,fontWeight:800}}>Payment Reports</h1><p style={{fontSize:13,color:"var(--muted)"}}>All transactions and revenue</p></div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14}}>
+      <div className="stat-card" style={{padding:20}}>
+        <div style={{fontSize:22,fontWeight:900,color:"var(--green)"}}>₹{total.toLocaleString()}</div>
+        <div style={{fontSize:13,color:"var(--muted)"}}>Total Revenue</div>
+      </div>
+      {byPlan.map(p=><div key={p.id} className="stat-card" style={{padding:20}}>
+        <div style={{fontSize:22,fontWeight:900,color:p.color}}>₹{p.revenue.toLocaleString()}</div>
+        <div style={{fontSize:13,color:"var(--muted)"}}>{p.name} ({p.count})</div>
+      </div>)}
+    </div>
+    <div className="card" style={{overflow:"hidden"}}>
+      <div style={{padding:"14px 20px",borderBottom:"1px solid var(--border)"}}>
+        <h3 style={{fontWeight:700}}>All Transactions ({payments.length})</h3>
+      </div>
+      {payments.length===0?<div style={{padding:40,textAlign:"center",color:"var(--muted)"}}>No payments yet</div>:
+      <table className="table">
+        <thead><tr><th>Txn ID</th><th>User</th><th>Plan</th><th>Amount</th><th>Method</th><th>Date</th></tr></thead>
+        <tbody>{[...payments].reverse().map(p=><tr key={p.id}>
+          <td style={{fontFamily:"JetBrains Mono,monospace",fontSize:12,color:"var(--muted)"}}>{p.txnId}</td>
+          <td style={{fontWeight:600}}>{p.userName}</td>
+          <td><PlanBadge plan={p.plan}/></td>
+          <td style={{color:"var(--green)",fontWeight:700}}>₹{p.amount}</td>
+          <td style={{color:"var(--muted)",textTransform:"uppercase",fontSize:12}}>{p.method}</td>
+          <td style={{color:"var(--muted)",fontSize:12}}>{new Date(p.date).toLocaleString()}</td>
+        </tr>)}</tbody>
+      </table>}
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN: UPLOAD BOOKS
+// ══════════════════════════════════════════════════════════
+function AdminUpload() {
+  const {setToast} = useApp();
+  const [stage,setStage] = useState("upload");
+  const [file,setFile] = useState(null);
+  const [drag,setDrag] = useState(false);
+  const [settings,setSettings] = useState({title:"",subject:"General Studies",numMcqs:100,difficulty:"All",year:"2024"});
+  const [progress,setProgress] = useState(0);
+  const [progText,setProgText] = useState("");
+
+  const handleFile = f => {
+    const ok=[".pdf",".docx",".txt"].some(e=>f.name.toLowerCase().endsWith(e));
+    if(!ok){setToast({msg:"Only PDF, DOCX, TXT supported",type:"error"});return;}
+    setFile(f); setSettings(s=>({...s,title:f.name.replace(/\.(pdf|docx|txt)$/i,"")})); setStage("settings");
+  };
+
+  const process = async () => {
+    setStage("processing");
+    const steps=[
+      {p:10,t:"📂 Reading file..."},
+      {p:25,t:"📄 Extracting text content..."},
+      {p:45,t:"🔍 Detecting chapters & topics..."},
+      {p:60,t:"🤖 Sending to Claude AI..."},
+      {p:78,t:"✨ Generating MCQs..."},
+      {p:90,t:"🏷️ Tagging difficulty & chapters..."},
+      {p:100,t:"🎉 Done!"},
+    ];
+    for(const s of steps){setProgText(s.t);setProgress(s.p);await new Promise(r=>setTimeout(r,600+Math.random()*200));}
+    setStage("done");
+    setToast({msg:`✅ ${settings.numMcqs} MCQs generated for "${settings.title}"`,type:"success"});
+  };
+
+  if(stage==="done") return <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:60,gap:16,animation:"fadeUp .4s ease"}}>
+    <div style={{fontSize:64}}>🎉</div>
+    <h2 style={{fontWeight:800,fontSize:22}}>Book Processed!</h2>
+    <p style={{color:"var(--muted)"}}>{settings.numMcqs} MCQs generated from "{settings.title}"</p>
+    <div style={{display:"flex",gap:10}}>
+      <button className="btn btn-secondary" onClick={()=>{setStage("upload");setFile(null);}}>Upload Another</button>
+      <button className="btn btn-primary" onClick={()=>window.location.hash="admin-mcqs"}>View MCQ Bank →</button>
+    </div>
+  </div>;
+
+  if(stage==="processing") return <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:60,gap:20,animation:"fadeUp .4s ease"}}>
+    <div style={{fontSize:48}}>🤖</div>
+    <h2 style={{fontWeight:800}}>Processing with AI</h2>
+    <div style={{width:"100%",maxWidth:400}}>
+      <div className="progress-bar" style={{height:10,marginBottom:12}}>
+        <div className="progress-fill" style={{width:`${progress}%`,background:"linear-gradient(90deg,var(--accent),var(--accent2))"}}/>
+      </div>
+      <p style={{textAlign:"center",color:"var(--muted)",fontSize:14}}>{progText}</p>
+      <p style={{textAlign:"center",color:"var(--accent2)",fontWeight:700,fontSize:20,marginTop:8}}>{progress}%</p>
+    </div>
+  </div>;
+
+  if(stage==="settings") return <div style={{maxWidth:600,animation:"fadeUp .4s ease"}}>
+    <h2 style={{fontSize:20,fontWeight:800,marginBottom:6}}>Configure MCQ Generation</h2>
+    <p style={{color:"var(--muted)",fontSize:13,marginBottom:20}}>File: <strong>{file?.name}</strong> ({(file?.size/1024).toFixed(0)} KB)</p>
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      <div><label className="label">Book Title</label><input className="input" value={settings.title} onChange={e=>setSettings(s=>({...s,title:e.target.value}))}/></div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+        <div><label className="label">Subject</label>
+          <select className="input" value={settings.subject} onChange={e=>setSettings(s=>({...s,subject:e.target.value}))}>
+            {["General Studies","Tamil","History","Polity","Science","Geography","Economics"].map(x=><option key={x}>{x}</option>)}
+          </select>
+        </div>
+        <div><label className="label">Target MCQs</label>
+          <select className="input" value={settings.numMcqs} onChange={e=>setSettings(s=>({...s,numMcqs:+e.target.value}))}>
+            {[50,100,200,500,1000].map(x=><option key={x}>{x}</option>)}
+          </select>
+        </div>
+      </div>
+      <div style={{display:"flex",gap:10,marginTop:8}}>
+        <button className="btn btn-secondary" onClick={()=>setStage("upload")}>← Back</button>
+        <button className="btn btn-primary" onClick={process} style={{flex:1}}>🤖 Generate {settings.numMcqs} MCQs with AI →</button>
+      </div>
+    </div>
+  </div>;
+
+  return <div style={{animation:"fadeUp .4s ease"}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:800}}>Upload Books</h1><p style={{fontSize:13,color:"var(--muted)"}}>Upload PDF, DOCX, or TXT to generate MCQs with AI</p></div>
+    <div className={`upload-zone ${drag?"drag":""}`}
+      onDragOver={e=>{e.preventDefault();setDrag(true)}}
+      onDragLeave={()=>setDrag(false)}
+      onDrop={e=>{e.preventDefault();setDrag(false);const f=e.dataTransfer.files[0];if(f)handleFile(f);}}>
+      <input type="file" accept=".pdf,.docx,.txt" style={{display:"none"}} id="fup" onChange={e=>handleFile(e.target.files[0])}/>
+      <label htmlFor="fup" style={{cursor:"pointer"}}>
+        <div style={{fontSize:48,marginBottom:12}}>📄</div>
+        <p style={{fontWeight:700,fontSize:16,marginBottom:6}}>Drag & drop or click to upload</p>
+        <p style={{color:"var(--muted)",fontSize:13}}>PDF, DOCX, TXT · Max 50MB</p>
+      </label>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN: MCQ BANK
+// ══════════════════════════════════════════════════════════
+function AdminMCQs() {
+  const [filter,setFilter] = useState({topic:"All",diff:"All"});
+  const topics=["All",...new Set(SAMPLE_MCQS.map(q=>q.topic))];
+  const diffs=["All","Easy","Medium","Hard"];
+  const filtered=SAMPLE_MCQS.filter(q=>(filter.topic==="All"||q.topic===filter.topic)&&(filter.diff==="All"||q.difficulty===filter.diff));
+  return <div style={{animation:"fadeUp .4s ease"}}>
+    <div style={{display:"flex",justifyContent:"space-between",marginBottom:20}}>
+      <div><h1 style={{fontSize:22,fontWeight:800}}>MCQ Bank</h1><p style={{fontSize:13,color:"var(--muted)"}}>{SAMPLE_MCQS.length} questions total</p></div>
+    </div>
+    <div style={{display:"flex",gap:10,marginBottom:16,flexWrap:"wrap"}}>
+      <select className="input" style={{maxWidth:160}} value={filter.topic} onChange={e=>setFilter(f=>({...f,topic:e.target.value}))}>
+        {topics.map(t=><option key={t}>{t}</option>)}
+      </select>
+      <select className="input" style={{maxWidth:130}} value={filter.diff} onChange={e=>setFilter(f=>({...f,diff:e.target.value}))}>
+        {diffs.map(d=><option key={d}>{d}</option>)}
+      </select>
+      <span style={{fontSize:13,color:"var(--muted)",marginLeft:"auto",alignSelf:"center"}}>{filtered.length} results</span>
+    </div>
+    <div className="card" style={{overflow:"hidden"}}>
+      <table className="table">
+        <thead><tr><th>#</th><th>Question</th><th>Topic</th><th>Difficulty</th><th>Tier</th></tr></thead>
+        <tbody>{filtered.map((q,i)=><tr key={q.id}>
+          <td style={{color:"var(--muted)",fontSize:12}}>{i+1}</td>
+          <td style={{maxWidth:360}}>
+            <p style={{fontWeight:500,fontSize:13,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{q.question}</p>
+            <p style={{fontSize:11,color:"var(--muted)",marginTop:2}}>✓ {q.options?.[q.correct]}</p>
+          </td>
+          <td><span className="badge" style={{background:"rgba(6,182,212,.1)",color:"var(--accent3)",border:"1px solid rgba(6,182,212,.2)"}}>{q.topic}</span></td>
+          <td><span className={`badge tag-${q.difficulty?.toLowerCase()||"medium"}`}>{q.difficulty}</span></td>
+          <td><span className={`badge tag-${["free","basic","pro","unlimited"][q.tier||0]}`}>{["Free","Basic","Pro","Unlimited"][q.tier||0]}</span></td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN: TESTS
+// ══════════════════════════════════════════════════════════
+function AdminTests() {
+  const {navigate,setActiveTest} = useApp();
+  const tests = generateTests();
+  return <div style={{animation:"fadeUp .4s ease"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+      <div><h1 style={{fontSize:22,fontWeight:800}}>Manage Tests</h1><p style={{fontSize:13,color:"var(--muted)"}}>Create and manage exam tests</p></div>
+      <button className="btn btn-primary">+ Create Test</button>
+    </div>
+    <div className="card" style={{overflow:"hidden"}}>
+      <table className="table">
+        <thead><tr><th>Test Name</th><th>Subject</th><th>Questions</th><th>Duration</th><th>Tier Required</th><th>Attempts</th><th>Actions</th></tr></thead>
+        <tbody>{tests.map(t=><tr key={t.id}>
+          <td style={{fontWeight:600}}>{t.name}</td>
+          <td style={{color:"var(--muted)"}}>{t.subject}</td>
+          <td>{t.questions.length}</td>
+          <td>{t.duration} min</td>
+          <td><span className={`badge tag-${["free","basic","pro","unlimited"][t.tier||0]}`}>{["Free","Basic","Pro","Unlimited"][t.tier||0]}</span></td>
+          <td>{t.totalAttempts.toLocaleString()}</td>
+          <td><div style={{display:"flex",gap:6}}>
+            <button className="btn btn-secondary" style={{fontSize:12,padding:"5px 10px"}} onClick={()=>{setActiveTest(t);navigate("exam");}}>Preview</button>
+            <button className="btn btn-ghost" style={{fontSize:12,padding:"5px 10px",color:"var(--red)"}}>Delete</button>
+          </div></td>
+        </tr>)}</tbody>
+      </table>
+    </div>
+  </div>;
+}
+
+// ══════════════════════════════════════════════════════════
+// ROOT APP
+// ══════════════════════════════════════════════════════════
+function App() {
+  const [page,setPage] = useState("login");
+  const [user,setUser] = useState(null);
+  const [darkMode,setDarkMode] = useState(true);
+  const [activeTest,setActiveTest] = useState(null);
+  const [testResult,setTestResult] = useState(null);
+  const [toast,setToast] = useState(null);
+  const [paymentPlan,setPaymentPlan] = useState(null); // plan to pay for
+  const [, forceUpdate] = useState(0);
+
+  // Session restore on mount
+  useEffect(()=>{
+    const u = Auth.getSession();
+    if(u) { setUser(u); setPage(u.role==="admin"?"admin-dashboard":"dashboard"); }
+    const dm = localStorage.getItem("eiq_dark");
+    if(dm!==null) setDarkMode(dm==="true");
+  },[]);
+
+  useEffect(()=>{
+    document.documentElement.className = darkMode?"":"light";
+    localStorage.setItem("eiq_dark",darkMode);
+  },[darkMode]);
+
+  // Session refresh (check every 30s)
+  useEffect(()=>{
+    if(!user) return;
+    const t = setInterval(()=>{
+      const fresh = Auth.getSession();
+      if(!fresh) { setUser(null); setPage("login"); setToast({msg:"Session expired. Please sign in again.",type:"warning"}); }
+      else if(fresh.status==="banned") { Auth.logout(); setUser(null); setPage("login"); setToast({msg:"Your account has been suspended.",type:"error"}); }
+    },30000);
+    return ()=>clearInterval(t);
+  },[user]);
+
+  const navigate = p => setPage(p);
+
+  const handlePaymentSuccess = () => {
+    // Refresh user from store
+    const fresh = UserStore.find(user.id) || user;
+    setUser(fresh);
+    Auth.setSession(fresh);
+    setPaymentPlan(null);
+    forceUpdate(n=>n+1);
+    setToast({msg:`🎉 Plan upgraded successfully!`,type:"success"});
+  };
+
+  // Route guards
+  const isLogin = page==="login";
+  const isExam = page==="exam";
+
+  // Pending check
+  if(user && user.status==="pending" && !isLogin) {
+    return <Ctx.Provider value={{user,setUser,darkMode,setDarkMode,page,navigate,setToast,activeTest,setActiveTest,testResult,setTestResult}}>
+      <PendingPage/>
+      {toast&&<Toast msg={toast.msg} type={toast.type} onClose={()=>setToast(null)}/>}
+    </Ctx.Provider>;
+  }
+
+  // Admin route guard
+  const isAdminPage = page.startsWith("admin-");
+  if(isAdminPage && user?.role!=="admin") {
+    navigate("dashboard");
+  }
+
+  const pageComponent = () => {
+    switch(page) {
+      case "login": return <LoginPage/>;
+      case "dashboard": return <StudentDashboard/>;
+      case "practice": return <PracticePage/>;
+      case "tests": return <TestsPage/>;
+      case "exam": return <ExamPage/>;
+      case "result": return <ResultPage/>;
+      case "analytics": return <AnalyticsPage/>;
+      case "leaderboard": return <LeaderboardPage/>;
+      case "pricing": return <PricingPage onSelectPlan={setPaymentPlan}/>;
+      case "admin-dashboard": return <AdminDashboard/>;
+      case "admin-users": return <AdminUsers/>;
+      case "admin-payments": return <AdminPayments/>;
+      case "admin-upload": return <AdminUpload/>;
+      case "admin-mcqs": return <AdminMCQs/>;
+      case "admin-tests": return <AdminTests/>;
+      default: return <StudentDashboard/>;
+    }
+  };
+
+  return <Ctx.Provider value={{user,setUser,darkMode,setDarkMode,page,navigate,activeTest,setActiveTest,testResult,setTestResult,setToast}}>
+    {!isLogin&&<NavBar/>}
+    {isLogin
+      ? pageComponent()
+      : <div className="app-layout">
+          {!isExam&&user&&<Sidebar/>}
+          <div className="page-content">{pageComponent()}</div>
+        </div>
+    }
+    {toast&&<Toast msg={toast.msg} type={toast.type} onClose={()=>setToast(null)}/>}
+    {paymentPlan&&user&&<PaymentModal plan={paymentPlan} user={user} onSuccess={handlePaymentSuccess} onClose={()=>setPaymentPlan(null)}/>}
+  </Ctx.Provider>;
+}
+
+ReactDOM.render(<App/>, document.getElementById("root"));
+</script>
+</body>
+</html>
